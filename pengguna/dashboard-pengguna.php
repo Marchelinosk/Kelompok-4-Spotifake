@@ -194,7 +194,7 @@ $podcasts = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <!-- Custom User Dashboard CSS -->
-    <link rel="stylesheet" href="../assets/css/pengguna/style.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css">
 </head>
 
 <body>
@@ -204,7 +204,7 @@ $podcasts = [
         <!-- ==================== SIDEBAR (KIRI) ==================== -->
         <aside class="sidebar">
             <!-- Brand Logo -->
-            <a href="index.php" class="brand-wrapper">
+            <a href="dashboard-pengguna.php" class="brand-wrapper">
                 <div class="brand-icon">
                     <i class="bi bi-soundwave"></i>
                 </div>
@@ -214,7 +214,7 @@ $podcasts = [
             <!-- Menu Utama -->
             <ul class="sidebar-nav">
                 <li>
-                    <a href="index.php" class="nav-link-custom active">
+                    <a href="dashboard-pengguna.php" class="nav-link-custom active">
                         <i class="bi bi-house-door-fill"></i>
                         <span>Beranda</span>
                     </a>

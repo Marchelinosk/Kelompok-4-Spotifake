@@ -42,7 +42,7 @@ $features = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <!-- Custom Landing CSS -->
-    <link rel="stylesheet" href="assets/css/pengguna/landing.css">
+    <link rel="stylesheet" href="assets/css/landing.css">
 </head>
 
 <body>
@@ -50,7 +50,7 @@ $features = [
     <!-- Header Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="landing-page.php">
                 <span class="brand-icon">
                     <i class="bi bi-soundwave"></i>
                 </span>
@@ -75,10 +75,10 @@ $features = [
                 </ul>
 
                 <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
-                    <a href="pengguna/index.php" class="btn-dashboard-nav">
+                    <a href="pengguna/dashboard-pengguna.php" class="btn-dashboard-nav">
                         <i class="bi bi-grid-fill"></i> Masuk / Dashboard
                     </a>
-                    <a href="pengguna/index.php" class="btn-register-nav">
+                    <a href="pengguna/dashboard-pengguna.php" class="btn-register-nav">
                         <i class="bi bi-sparkles"></i> Daftar Gratis
                     </a>
                 </div>
@@ -102,7 +102,7 @@ $features = [
                         <?= htmlspecialchars($description); ?>
                     </p>
                     <div class="hero-buttons">
-                        <a href="pengguna/index.php" class="btn-primary-custom">
+                        <a href="pengguna/dashboard-pengguna.php" class="btn-primary-custom">
                             <i class="bi bi-play-fill fs-5"></i> Mulai Sekarang
                         </a>
                         <a href="#fitur" class="btn-outline-custom">
@@ -182,7 +182,7 @@ $features = [
                     <p class="cta-desc">
                         Spotifake hadir sebagai platform streaming musik berbasis web yang memberikan kebebasan penuh kepada pengguna untuk menikmati lagu dan podcast, mengelola playlist impian, serta merasakan audio berkelas tanpa biaya langganan apapun.
                     </p>
-                    <a href="pengguna/index.php" class="btn-primary-custom">
+                    <a href="pengguna/dashboard-pengguna.php" class="btn-primary-custom">
                         <i class="bi bi-stars"></i> Gabung Sekarang
                     </a>
                 </div>
@@ -206,7 +206,7 @@ $features = [
                 <div class="footer-links">
                     <a href="#beranda">Beranda</a>
                     <a href="#fitur">Fitur Unggulan</a>
-                    <a href="pengguna/index.php">Mulai Dengarkan</a>
+                    <a href="pengguna/dashboard-pengguna.php">Mulai Dengarkan</a>
                 </div>
             </div>
         </div>

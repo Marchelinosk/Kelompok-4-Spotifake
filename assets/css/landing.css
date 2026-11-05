@@ -181,7 +181,9 @@ body {
 .hero-title span {
   background: linear-gradient(135deg, #00a2ff, #7dd3fc, #c084fc);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .hero-description {

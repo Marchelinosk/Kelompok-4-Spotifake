@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Custom CSS Landing Page -->
-    <link href="assets/css/landing.css" rel="stylesheet">
+    <link href="../assets/css/landing.css" rel="stylesheet">
     <style>
         .form-control-custom {
             background-color: var(--bg-surface);

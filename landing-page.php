@@ -63,23 +63,10 @@ $features = [
 
             <div class="collapse navbar-collapse" id="navbarMenu">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#beranda">Beranda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#fitur">Fitur Unggulan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#tentang">Tentang</a>
-                    </li>
                 </ul>
-
                 <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
-                    <a href="pengguna/dashboard-pengguna.php" class="btn-dashboard-nav">
-                        <i class="bi bi-grid-fill"></i> Masuk / Dashboard
-                    </a>
-                    <a href="pengguna/dashboard-pengguna.php" class="btn-register-nav">
-                        <i class="bi bi-sparkles"></i> Daftar Gratis
+                    <a href="pengguna/login.php" class="btn-register-nav">
+                        <i class="bi bi-sparkles"></i> Login / Daftar
                     </a>
                 </div>
             </div>
@@ -102,30 +89,26 @@ $features = [
                         <?= htmlspecialchars($description); ?>
                     </p>
                     <div class="hero-buttons">
-                        <a href="pengguna/dashboard-pengguna.php" class="btn-primary-custom">
+                        <a href="pengguna/login.php" class="btn-primary-custom">
                             <i class="bi bi-play-fill fs-5"></i> Mulai Sekarang
                         </a>
                         <a href="#fitur" class="btn-outline-custom">
                             <i class="bi bi-compass"></i> Jelajahi Fitur
+                        </a>
+                        <a href="#tentang" class="btn-outline-custom">
+                            <i class="bi-info-circle bi-"></i> Tentang
                         </a>
                     </div>
                 </div>
 
                 <div class="col-lg-5 hero-visual-col">
                     <div class="hero-visual-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="preview-badge text-info">
-                                <i class="bi bi-broadcast"></i> SEDANG DIPUTAR
-                            </span>
-                            <span class="text-white-50 small">Lossless Audio • 432Hz</span>
-                        </div>
-
                         <div class="mini-player-preview">
                             <div class="vinyl-disc">
                                 <div class="vinyl-center"></div>
                             </div>
                             <div class="preview-info flex-grow-1">
-                                <h4>Frostwave Vol. 1</h4>
+                                <h4>Spotifake Vol. 1</h4>
                                 <p>Arctic Mirage • Synthwave Kutub</p>
                                 <div class="preview-bar">
                                     <div class="preview-progress"></div>
@@ -182,7 +165,7 @@ $features = [
                     <p class="cta-desc">
                         Spotifake hadir sebagai platform streaming musik berbasis web yang memberikan kebebasan penuh kepada pengguna untuk menikmati lagu dan podcast, mengelola playlist impian, serta merasakan audio berkelas tanpa biaya langganan apapun.
                     </p>
-                    <a href="pengguna/dashboard-pengguna.php" class="btn-primary-custom">
+                    <a href="pengguna/login.php" class="btn-primary-custom">
                         <i class="bi bi-stars"></i> Gabung Sekarang
                     </a>
                 </div>
@@ -203,11 +186,6 @@ $features = [
                 <p class="footer-copy">
                     &copy; 2026 <?= htmlspecialchars($appName); ?>. All Rights Reserved.
                 </p>
-                <div class="footer-links">
-                    <a href="#beranda">Beranda</a>
-                    <a href="#fitur">Fitur Unggulan</a>
-                    <a href="pengguna/dashboard-pengguna.php">Mulai Dengarkan</a>
-                </div>
             </div>
         </div>
     </footer>

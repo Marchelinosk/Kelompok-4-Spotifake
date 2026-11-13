@@ -1,6 +1,29 @@
 <?php
+session_start();
+
+// Cek apakah user sudah login
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Ambil nama dari session
+$userName = $_SESSION['username'] ?? "Pengguna Spotifake";
+
+// Logika sapaan waktu otomatis
+date_default_timezone_set('Asia/Jakarta');
+$jam = date('H');
+if ($jam >= 5 && $jam < 11) {
+    $sapaan = "Selamat Pagi";
+} elseif ($jam >= 11 && $jam < 15) {
+    $sapaan = "Selamat Siang";
+} elseif ($jam >= 15 && $jam < 18) {
+    $sapaan = "Selamat Sore";
+} else {
+    $sapaan = "Selamat Malam";
+}
+
 $pageTitle = "Spotifake - Web Audio Player";
-$userName = "Alya Auralia";
 
 // Data Rangkuman Aktivitas (2x3 Grid)
 $quickPicks = [
@@ -269,13 +292,19 @@ $podcasts = [
                 </div>
 
                 <div class="topbar-right">
-                    <a href="#premium" class="premium-badge">
-                        <i class="bi bi-gem"></i> PREMIUM
-                    </a>
-
-                    <div class="user-profile">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop" alt="User Profile" class="user-avatar">
-                        <span class="user-name"><?= htmlspecialchars($userName); ?></span>
+                    <div class="user-profile dropdown">
+                        <div data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                            <img src="https://ui-avatars.com/api/?name=<?= urlencode($userName); ?>&background=0D8ABC&color=fff" alt="User Profile" class="user-avatar" style="border-radius: 50%;">
+                            <span class="user-name"><?= htmlspecialchars($userName); ?> <i class="bi bi-caret-down-fill" style="font-size: 0.8em; margin-left:3px;"></i></span>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" style="background-color: #1a1a1a; border: 1px solid #333;">
+                            <li><a class="dropdown-item text-white" href="#"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
+                            <li><a class="dropdown-item text-white" href="#"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+                            <li>
+                                <hr class="dropdown-divider border-secondary">
+                            </li>
+                            <li><a class="dropdown-item text-danger fw-bold" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+                        </ul>
                     </div>
                 </div>
             </header>
@@ -327,7 +356,7 @@ $podcasts = [
                     <div class="section-header-row">
                         <div>
                             <span class="section-pretitle">RANGKUMAN AKTIVITAS</span>
-                            <h2 class="section-main-title">Selamat Malam, <?= htmlspecialchars($userName); ?></h2>
+                            <h2 class="section-main-title"><?= $sapaan; ?>, <?= htmlspecialchars($userName); ?></h2>
                         </div>
                         <div class="sync-status">
                             Sinkronisasi Audio: <span class="text-info fw-bold">Aktif (2026.1C)</span>

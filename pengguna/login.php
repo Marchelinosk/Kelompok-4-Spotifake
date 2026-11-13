@@ -4,7 +4,7 @@ require_once '../config/database.php';
 
 // Jika sudah login, langsung arahkan ke dashboard
 if (isset($_SESSION['user_id'])) {
-    header("Location: pengguna/dashboard-pengguna.php");
+    header("Location: dashboard-pengguna.php");
     exit;
 }
 
@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role']; // Disimpan untuk pengecekan akses admin/user nanti
 
-        header("Location: pengguna/dashboard-pengguna.php");
+        header("Location: dashboard-pengguna.php");
         exit;
     } else {
         $error = "Email atau password salah!";

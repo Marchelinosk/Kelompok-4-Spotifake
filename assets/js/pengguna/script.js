@@ -59,19 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePlayerProgress() {
         if (totalSeconds <= 0) totalSeconds = 1;
         const percent = Math.min(100, Math.max(0, (currentSeconds / totalSeconds) * 100));
-        seekProgress.style.width = `${percent}%`;
-        currentTimeText.textContent = formatTime(currentSeconds);
-        durationTimeText.textContent = formatTime(totalSeconds);
+        if (seekProgress) seekProgress.style.width = `${percent}%`;
+        if (currentTimeText) currentTimeText.textContent = formatTime(currentSeconds);
+        if (durationTimeText) durationTimeText.textContent = formatTime(totalSeconds);
     }
 
     // Toggle Play / Pause
     function togglePlay(state = null) {
         isPlaying = state !== null ? state : !isPlaying;
 
-        if (isPlaying) {
+        if (isPlaying && playIcon) {
             playIcon.classList.remove('bi-play-fill');
             playIcon.classList.add('bi-pause-fill');
-            btnMainPlay.style.transform = 'scale(1.05)';
+            if (btnMainPlay) btnMainPlay.style.transform = 'scale(1.05)';
             
             clearInterval(playTimer);
             playTimer = setInterval(() => {
@@ -83,19 +83,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     togglePlay(false);
                 }
             }, 1000);
-        } else {
+        } else if (playIcon) {
             playIcon.classList.remove('bi-pause-fill');
             playIcon.classList.add('bi-play-fill');
-            btnMainPlay.style.transform = 'scale(1)';
+            if (btnMainPlay) btnMainPlay.style.transform = 'scale(1)';
             clearInterval(playTimer);
         }
     }
 
     // Play specific track
     function playTrack(title, artist, durationStr, imgUrl) {
-        currentTitle.textContent = title || 'Lagu Pilihan';
-        currentArtist.textContent = artist || 'Artis Spotifake';
-        if (imgUrl) currentCover.src = imgUrl;
+        if (currentTitle) currentTitle.textContent = title || 'Lagu Pilihan';
+        if (currentArtist) currentArtist.textContent = artist || 'Artis Spotifake';
+        if (imgUrl && currentCover) currentCover.src = imgUrl;
 
         totalSeconds = parseTimeString(durationStr);
         currentSeconds = 0;
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const rect = volumeBar.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             currentVolume = Math.min(1, Math.max(0, clickX / rect.width));
-            volumeProgress.style.width = `${currentVolume * 100}%`;
+            if (volumeProgress) volumeProgress.style.width = `${currentVolume * 100}%`;
             isMuted = false;
             updateVolumeIcon();
         });
@@ -150,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Volume Mute Toggle
     function updateVolumeIcon() {
+        if (!volumeIcon) return;
         if (isMuted || currentVolume === 0) {
             volumeIcon.className = 'bi bi-volume-mute text-danger';
         } else if (currentVolume < 0.5) {
@@ -162,9 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnVolume) {
         btnVolume.addEventListener('click', () => {
             isMuted = !isMuted;
-            if (isMuted) {
+            if (isMuted && volumeProgress) {
                 volumeProgress.style.width = '0%';
-            } else {
+            } else if (volumeProgress) {
                 volumeProgress.style.width = `${currentVolume * 100}%`;
             }
             updateVolumeIcon();
@@ -280,6 +281,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ==========================================
+    // FITUR INTERAKTIF UNTUK LOGIN & REGISTER
+    // ==========================================
+
+    // 1. Toggle Show/Hide Password
+    const togglePasswordIcons = document.querySelectorAll('.toggle-password');
+    togglePasswordIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.classList.remove('bi-eye');
+                this.classList.add('bi-eye-slash');
+                showToast('Password ditampilkan');
+            } else {
+                input.type = 'password';
+                this.classList.remove('bi-eye-slash');
+                this.classList.add('bi-eye');
+            }
+        });
+    });
+
+    // 2. Animasi Loading Saat Form Disubmit
+    const authForms = document.querySelectorAll('.auth-form');
+    authForms.forEach(form => {
+        form.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Memproses...';
+                submitBtn.style.opacity = '0.8';
+                submitBtn.style.pointerEvents = 'none';
+            }
+        });
+    });
+
     // Initial setup
     updatePlayerProgress();
 });
@@ -298,4 +336,3 @@ function showToast(message) {
         toast.classList.remove('show');
     }, 2800);
 }
-

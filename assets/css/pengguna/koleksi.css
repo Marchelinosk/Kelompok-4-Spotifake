@@ -1,6 +1,49 @@
-﻿/* ========================================================
+/* ========================================================
    FITUR KOLEKSI MUSIK SAYA (UI-005B) - SPOTIFAKE
    ======================================================== */
+
+/* Filter Chips */
+.genre-chips-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.genre-chips-wrapper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.chip-btn {
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 1.15rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+  display: inline-block;
+}
+
+.chip-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.chip-btn.active {
+  background: #ffffff;
+  color: #050811;
+  font-weight: 700;
+  border-color: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
+}
 
 .collection-grid {
   display: grid;

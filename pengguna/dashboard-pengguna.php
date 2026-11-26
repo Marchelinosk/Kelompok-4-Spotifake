@@ -217,8 +217,8 @@ $podcasts = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <!-- Base Dashboard & Share Modal CSS -->
-    <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css">
-    <link rel="stylesheet" href="../assets/css/pengguna/share-modal.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css?v=1.2">
+    <link rel="stylesheet" href="../assets/css/pengguna/share-modal.css?v=1.2">
 </head>
 
 <body>

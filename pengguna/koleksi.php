@@ -61,8 +61,8 @@ $myPlaylists = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Base & Modular CSS -->
-    <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css">
-    <link rel="stylesheet" href="../assets/css/pengguna/koleksi.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css?v=1.2">
+    <link rel="stylesheet" href="../assets/css/pengguna/koleksi.css?v=1.2">
 </head>
 
 <body>

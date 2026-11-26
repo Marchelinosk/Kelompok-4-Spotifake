@@ -1,4 +1,4 @@
-﻿/* ========================================================
+/* ========================================================
    FITUR LAGU YANG DISUKAI (UI-004) - SPOTIFAKE
    ======================================================== */
 
@@ -29,6 +29,79 @@
   font-size: 5rem;
   color: #fff;
   box-shadow: 0 12px 35px rgba(147, 51, 234, 0.4);
+}
+
+/* Playlist Action Bar */
+.playlist-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.action-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.btn-play-all {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--accent-cyan-glow);
+  transition: all 0.2s ease;
+}
+
+.btn-play-all:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 26px rgba(0, 162, 255, 0.6);
+}
+
+.btn-action-round {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  outline: none;
+  padding: 0;
+}
+
+.btn-action-round:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.btn-sort-dropdown {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
 }
 
 /* Playlist / Liked Song Table */

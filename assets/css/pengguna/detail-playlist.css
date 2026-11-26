@@ -1,0 +1,127 @@
+﻿/* ========================================================
+   FITUR DETAIL & MANAJEMEN PLAYLIST (UI-005) - SPOTIFAKE
+   ======================================================== */
+
+.playlist-header-banner {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+  padding: 2.5rem;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(30, 41, 68, 0.7), rgba(9, 14, 25, 0.95));
+  border: 1px solid var(--border-cyan);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 162, 255, 0.12);
+}
+
+.playlist-cover-big {
+  width: 190px;
+  height: 190px;
+  min-width: 190px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.playlist-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playlist-type-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent-cyan-light);
+}
+
+.playlist-title-big {
+  font-size: 2.85rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -1px;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.playlist-desc-text {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+  max-width: 650px;
+}
+
+.playlist-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Playlist Action Bar */
+.playlist-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.action-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.btn-play-all {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--accent-cyan-glow);
+  transition: all 0.2s ease;
+}
+
+.btn-play-all:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 26px rgba(0, 162, 255, 0.6);
+}
+
+.btn-action-round {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-action-round:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}

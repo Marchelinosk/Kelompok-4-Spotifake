@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 require_once '../config/database.php';
 
@@ -103,8 +103,11 @@ $playlistSongs = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Custom Dashboard CSS -->
+    <!-- Base & Modular CSS -->
     <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/detail-playlist.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/lagu-disukai.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/share-modal.css">
 </head>
 
 <body>
@@ -407,47 +410,10 @@ $playlistSongs = [
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/pengguna/script.js"></script>
-
-    <script>
-        function toggleAddSongSection() {
-            const box = document.getElementById('addSongBox');
-            box.style.display = box.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function addSongMock(title) {
-            showToast('Lagu "' + title + '" berhasil ditambahkan ke playlist!');
-            toggleAddSongSection();
-        }
-
-        function removeSongRow(btn, songTitle) {
-            if (confirm('Hapus lagu "' + songTitle + '" dari playlist ini?')) {
-                const tr = btn.closest('tr');
-                tr.style.opacity = '0';
-                tr.style.transform = 'translateX(20px)';
-                setTimeout(() => tr.remove(), 250);
-                showToast('Lagu "' + songTitle + '" dihapus dari playlist');
-            }
-        }
-
-        function toggleFollowPlaylist(btn) {
-            const icon = btn.querySelector('i');
-            if (icon.classList.contains('bi-bookmark-plus')) {
-                icon.className = 'bi bi-bookmark-check-fill text-info';
-                showToast('Playlist disimpan ke Koleksi Saya! ✨');
-            } else {
-                icon.className = 'bi bi-bookmark-plus';
-                showToast('Playlist dihapus dari Koleksi Saya');
-            }
-        }
-
-        function copyShareLink() {
-            const copyInput = document.getElementById('shareUrlInput');
-            copyInput.select();
-            navigator.clipboard.writeText(copyInput.value);
-            showToast('Tautan berhasil disalin ke clipboard! 📋');
-        }
-    </script>
+    <!-- Modular JS -->
+    <script src="../assets/js/pengguna/player.js"></script>
+    <script src="../assets/js/pengguna/playlist.js"></script>
+    <script src="../assets/js/pengguna/share-modal.js"></script>
 </body>
 
 </html>

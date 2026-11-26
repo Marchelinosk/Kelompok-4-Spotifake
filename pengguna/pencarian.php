@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 require_once '../config/database.php';
 
@@ -58,8 +58,11 @@ $relatedSongs = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Custom Dashboard CSS -->
+    <!-- Base & Modular CSS -->
     <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/pencarian.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/lagu-disukai.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/share-modal.css">
 </head>
 
 <body>
@@ -347,25 +350,10 @@ $relatedSongs = [
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom Player Script -->
-    <script src="../assets/js/pengguna/script.js"></script>
-
-    <script>
-        function filterGenre(btn, genreName) {
-            if (btn) {
-                document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            }
-            showToast('Menampilkan kategori: ' + genreName);
-        }
-
-        function copyShareLink() {
-            const copyInput = document.getElementById('shareUrlInput');
-            copyInput.select();
-            navigator.clipboard.writeText(copyInput.value);
-            showToast('Tautan berhasil disalin ke clipboard! 📋');
-        }
-    </script>
+    <!-- Modular JS -->
+    <script src="../assets/js/pengguna/player.js"></script>
+    <script src="../assets/js/pengguna/pencarian.js"></script>
+    <script src="../assets/js/pengguna/share-modal.js"></script>
 </body>
 
 </html>

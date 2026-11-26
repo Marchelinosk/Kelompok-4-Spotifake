@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 require_once '../config/database.php';
 
@@ -60,7 +60,9 @@ $myPlaylists = [
     <title><?= htmlspecialchars($pageTitle); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Base & Modular CSS -->
     <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/koleksi.css">
 </head>
 
 <body>
@@ -231,7 +233,9 @@ $myPlaylists = [
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/pengguna/script.js"></script>
+    <!-- Modular JS -->
+    <script src="../assets/js/pengguna/player.js"></script>
+    <script src="../assets/js/pengguna/playlist.js"></script>
 
     <script>
         function filterGenre(btn, name) {
@@ -242,12 +246,15 @@ $myPlaylists = [
             showToast('Menampilkan: ' + name);
         }
 
-        document.getElementById('btnBuatPlaylistBaru').addEventListener('click', function() {
-            const playlistName = prompt('Beri nama playlist baru Anda:', 'Playlist Baru #1');
-            if (playlistName) {
-                showToast('Playlist "' + playlistName + '" berhasil dibuat! 🎵');
-            }
-        });
+        const btnBuat = document.getElementById('btnBuatPlaylistBaru');
+        if (btnBuat) {
+            btnBuat.addEventListener('click', function() {
+                const playlistName = prompt('Beri nama playlist baru Anda:', 'Playlist Baru #1');
+                if (playlistName) {
+                    showToast('Playlist "' + playlistName + '" berhasil dibuat! 🎵');
+                }
+            });
+        }
     </script>
 </body>
 

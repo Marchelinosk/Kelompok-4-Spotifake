@@ -216,8 +216,9 @@ $podcasts = [
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
-    <!-- Custom User Dashboard CSS -->
+    <!-- Base Dashboard & Share Modal CSS -->
     <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/share-modal.css">
 </head>
 
 <body>
@@ -641,19 +642,9 @@ $podcasts = [
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Custom User JS -->
-    <script src="../assets/js/pengguna/script.js"></script>
-
-    <script>
-        function copyShareLink() {
-            const copyInput = document.getElementById('shareUrlInput');
-            if (copyInput) {
-                copyInput.select();
-                navigator.clipboard.writeText(copyInput.value);
-                showToast('Tautan berhasil disalin ke clipboard! 📋');
-            }
-        }
-    </script>
+    <!-- Modular JS -->
+    <script src="../assets/js/pengguna/player.js"></script>
+    <script src="../assets/js/pengguna/share-modal.js"></script>
 </body>
 
 </html>

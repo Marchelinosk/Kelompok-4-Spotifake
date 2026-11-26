@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 require_once '../config/database.php';
 
@@ -93,8 +93,10 @@ $likedSongsList = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Custom Dashboard CSS -->
+    <!-- Base & Modular CSS -->
     <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/lagu-disukai.css">
+    <link rel="stylesheet" href="../assets/css/pengguna/share-modal.css">
 </head>
 
 <body>
@@ -408,28 +410,10 @@ $likedSongsList = [
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom Player Script -->
-    <script src="../assets/js/pengguna/script.js"></script>
-
-    <script>
-        function toggleLikeRow(btn, songTitle) {
-            const icon = btn.querySelector('i');
-            if (icon.classList.contains('bi-heart-fill')) {
-                icon.className = 'bi bi-heart text-secondary fs-5';
-                showToast(`Menghapus "${songTitle}" dari Lagu Disukai`);
-            } else {
-                icon.className = 'bi bi-heart-fill text-danger fs-5';
-                showToast(`Menambahkan "${songTitle}" ke Lagu Disukai ❤️`);
-            }
-        }
-
-        function copyShareLink() {
-            const copyInput = document.getElementById('shareUrlInput');
-            copyInput.select();
-            navigator.clipboard.writeText(copyInput.value);
-            showToast('Tautan berhasil disalin ke clipboard! 📋');
-        }
-    </script>
+    <!-- Modular JS -->
+    <script src="../assets/js/pengguna/player.js"></script>
+    <script src="../assets/js/pengguna/lagu-disukai.js"></script>
+    <script src="../assets/js/pengguna/share-modal.js"></script>
 </body>
 
 </html>

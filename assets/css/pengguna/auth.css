@@ -1,0 +1,70 @@
+﻿/* ========================================================
+   FITUR AUTENTIKASI: LOGIN & REGISTER (UI-001) - SPOTIFAKE
+   ======================================================== */
+
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(145deg, rgba(16, 26, 46, 0.85), rgba(9, 14, 25, 0.95));
+  border: 1px solid var(--border-cyan);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 162, 255, 0.2);
+  backdrop-filter: blur(24px);
+  position: relative;
+  overflow: hidden;
+}
+
+.form-control-custom {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.form-control-custom:focus {
+  background-color: var(--bg-surface-hover);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 0.25rem var(--accent-cyan-glow);
+  color: #fff;
+}
+
+.form-control-custom::placeholder {
+  color: #94a3b8 !important;
+  font-weight: 500 !important;
+  opacity: 0.7;
+}
+
+.form-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.auth-footer-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.auth-footer-link {
+  color: var(--accent-cyan);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.auth-footer-link:hover {
+  color: var(--accent-cyan-light);
+  text-decoration: underline;
+}

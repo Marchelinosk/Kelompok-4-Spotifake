@@ -41,64 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Custom CSS Landing Page -->
+    <!-- Custom CSS Landing Page & Auth Modular CSS -->
     <link href="../assets/css/landing.css" rel="stylesheet">
-    <style>
-        .form-control-custom {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-glass);
-            color: var(--text-primary);
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .form-control-custom:focus {
-            background-color: var(--bg-surface-hover);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 0.25rem var(--accent-cyan-glow);
-            color: #fff;
-        }
-
-        .form-label {
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .auth-wrapper {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        #toastNotification.show {
-            display: block !important;
-            opacity: 1 !important;
-            animation: slideUp 0.3s ease forwards;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        /* Mengubah warna dan ketebalan teks placeholder di dalam input */
-        .form-control-custom::placeholder {
-            color: #ffffff !important;
-            font-weight: bold !important;
-            opacity: 0.8;
-            /* Sengaja dibuat 0.8 agar sedikit lebih redup dari teks yang diketik user. Ubah ke 1 jika ingin putih pekat. */
-        }
-    </style>
+    <link href="../assets/css/pengguna/auth.css" rel="stylesheet">
 </head>
 
 <body>
@@ -161,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <!-- Script JS -->
-    <script src="../assets/js/pengguna/script.js"></script>
+    <script src="../assets/js/pengguna/auth.js"></script>
 </body>
 
 </html>

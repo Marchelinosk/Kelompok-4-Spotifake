@@ -243,19 +243,25 @@ $podcasts = [
                     </a>
                 </li>
                 <li>
-                    <a href="#cari" class="nav-link-custom" id="navSearchTrigger">
+                    <a href="pencarian.php" class="nav-link-custom">
                         <i class="bi bi-search"></i>
                         <span>Cari</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#koleksi" class="nav-link-custom">
+                    <a href="koleksi.php" class="nav-link-custom">
                         <i class="bi bi-collection-play"></i>
                         <span>Koleksi Saya</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#buat-playlist" class="nav-link-custom" id="navCreatePlaylist">
+                    <a href="lagu-disukai.php" class="nav-link-custom">
+                        <i class="bi bi-heart-fill text-danger"></i>
+                        <span>Lagu Disukai</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link-custom" id="navCreatePlaylist">
                         <i class="bi bi-plus-square"></i>
                         <span>Buat Playlist</span>
                     </a>
@@ -265,11 +271,10 @@ $podcasts = [
             <!-- Playlist Section -->
             <div class="sidebar-heading">PLAYLISTS</div>
             <ul class="playlist-list">
-                <li><a href="#chill" class="playlist-link">Chill Vibes</a></li>
-                <li><a href="#top50" class="playlist-link">Weekly Top 50</a></li>
-                <li><a href="#coding" class="playlist-link">Coding Session</a></li>
-                <li><a href="#lofi" class="playlist-link">Night Drive Synth</a></li>
-                <li><a href="#focus" class="playlist-link">Deep Focus Alpha</a></li>
+                <li><a href="detail-playlist.php?playlist=chill-vibes" class="playlist-link">Chill Vibes 2026</a></li>
+                <li><a href="detail-playlist.php?playlist=weekly-top-50" class="playlist-link">Weekly Top 50</a></li>
+                <li><a href="detail-playlist.php?playlist=coding-session" class="playlist-link">Coding Session</a></li>
+                <li><a href="detail-playlist.php?playlist=night-drive" class="playlist-link">Night Drive Synth</a></li>
             </ul>
         </aside>
 
@@ -563,8 +568,8 @@ $podcasts = [
 
             <!-- Right: Secondary Controls & Volume -->
             <div class="player-right">
+                <button class="control-btn" data-bs-toggle="modal" data-bs-target="#shareModal" title="Bagikan Lagu Ini"><i class="bi bi-share"></i></button>
                 <button class="control-btn" id="btnQueue" title="Antrean Putar"><i class="bi bi-view-list"></i></button>
-                <button class="control-btn" id="btnDevice" title="Hubungkan Perangkat"><i class="bi bi-speaker"></i></button>
                 <div class="volume-wrapper">
                     <button class="control-btn" id="btnVolume"><i class="bi bi-volume-up" id="volumeIcon"></i></button>
                     <div class="volume-bar-track" id="volumeBar">
@@ -580,6 +585,57 @@ $podcasts = [
             <span id="toastMessage">Pemberitahuan</span>
         </div>
 
+        <!-- ==================== MODAL BAGIKAN (UI-005C) ==================== -->
+        <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered share-modal-dialog">
+                <div class="modal-content share-modal-content">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-share-fill text-info fs-5"></i>
+                            <h5 class="fw-bold mb-0 text-white">Bagikan Musik</h5>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <p class="text-secondary small mb-3">Bagikan tautan langsung atau bagikan ke media sosial favoritmu:</p>
+
+                    <div class="share-url-box">
+                        <input type="text" id="shareUrlInput" class="share-url-input" value="https://spotifake.app/track/midnight-echoes" readonly>
+                        <button type="button" class="btn-copy-url" onclick="copyShareLink()">
+                            <i class="bi bi-clipboard me-1"></i> Salin
+                        </button>
+                    </div>
+
+                    <div class="share-social-grid">
+                        <a href="https://wa.me/?text=Dengarkan%20lagu%20ini%20di%20Spotifake:%20https://spotifake.app" target="_blank" class="share-social-btn wa">
+                            <i class="bi bi-whatsapp"></i>
+                            <span>WhatsApp</span>
+                        </a>
+                        <a href="https://t.me/share/url?url=https://spotifake.app" target="_blank" class="share-social-btn tg">
+                            <i class="bi bi-telegram"></i>
+                            <span>Telegram</span>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?text=Dengarkan%20lagu%20di%20Spotifake" target="_blank" class="share-social-btn tw">
+                            <i class="bi bi-twitter-x"></i>
+                            <span>Twitter / X</span>
+                        </a>
+                        <a href="javascript:void(0)" onclick="showToast('Tautan disalin untuk Instagram Stories!')" class="share-social-btn ig">
+                            <i class="bi bi-instagram"></i>
+                            <span>Instagram</span>
+                        </a>
+                    </div>
+
+                    <div class="qr-preview-box">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://spotifake.app" alt="QR Code" class="qr-code-img">
+                        <div>
+                            <div class="fw-bold text-white small">Scan & Play Instan</div>
+                            <div class="text-secondary small">Arahkan kamera smartphone untuk langsung memutar di perangkat lain.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Bootstrap 5 JS Bundle -->
@@ -587,6 +643,17 @@ $podcasts = [
 
     <!-- Custom User JS -->
     <script src="../assets/js/pengguna/script.js"></script>
+
+    <script>
+        function copyShareLink() {
+            const copyInput = document.getElementById('shareUrlInput');
+            if (copyInput) {
+                copyInput.select();
+                navigator.clipboard.writeText(copyInput.value);
+                showToast('Tautan berhasil disalin ke clipboard! 📋');
+            }
+        }
+    </script>
 </body>
 
 </html>

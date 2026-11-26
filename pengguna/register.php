@@ -3,7 +3,7 @@ session_start();
 require_once '../config/database.php';
 
 if (isset($_SESSION['user_id'])) {
-    header("Location: pengguna/dashboard-pengguna.php");
+    header("Location: dashboard-pengguna.php");
     exit;
 }
 
@@ -161,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <!-- Script JS -->
-    <script src="assets/js/pengguna/script.js"></script>
+    <script src="../assets/js/pengguna/script.js"></script>
 </body>
 
 </html>

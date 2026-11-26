@@ -163,7 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <!-- Script JS -->
-    <script src="assets/js/pengguna/script.js"></script>
+    <script src="../assets/js/pengguna/script.js"></script>
 </body>
 
 </html>

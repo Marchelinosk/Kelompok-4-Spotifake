@@ -169,9 +169,9 @@ $relatedSongs = [
                 </div>
 
                 <!-- 2. Search Results Section -->
-                <div class="row g-4 mb-4" id="searchResultsRow">
+                <div class="row g-4 mb-5" id="searchResultsRow">
                     <!-- Hasil Teratas (Top Result) -->
-                    <div class="col-lg-5">
+                    <div class="col-lg-5 top-result-col">
                         <h4 class="fw-bold text-white mb-3" style="font-size: 1.35rem;">Hasil Teratas</h4>
                         <div class="top-result-card play-trigger" data-track="Glacier Wave" data-artist="Arctic Soundscape" data-duration="04:20" data-img="https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?q=80&w=400&auto=format&fit=crop">
                             <img src="https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?q=80&w=400&auto=format&fit=crop" alt="Top Result" class="top-result-img">

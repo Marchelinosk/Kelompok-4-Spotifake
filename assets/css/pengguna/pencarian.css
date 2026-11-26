@@ -1,4 +1,4 @@
-﻿/* ========================================================
+/* ========================================================
    FITUR PENCARIAN (UI-003) - SPOTIFAKE
    ======================================================== */
 
@@ -45,12 +45,24 @@
 }
 
 /* Top Result Card (Search UI-003) */
+.top-result-col {
+  display: flex;
+  flex-direction: column;
+}
+
+#searchResultsRow .song-table-container {
+  margin-bottom: 0;
+}
+
 .top-result-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 20px;
   padding: 1.75rem;
-  height: 100%;
+  padding-bottom: 2rem;
+  flex: 1;
+  height: auto;
+  min-height: 280px;
   display: flex;
   flex-direction: column;
   position: relative;

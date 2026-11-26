@@ -196,9 +196,9 @@ $topRecommendations = [
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link-custom" data-bs-toggle="modal" data-bs-target="#modalCreatePlaylist">
-                        <i class="bi bi-plus-square-fill text-info"></i>
-                        <span>Buat Koleksi</span>
+                    <a href="koleksi.php?action=create" class="nav-link-custom" id="navCreatePlaylist">
+                        <i class="bi bi-plus-square"></i>
+                        <span>Buat Playlist</span>
                     </a>
                 </li>
             </ul>

@@ -1,13 +1,14 @@
 <?php
 session_start();
+require_once '../config/database.php';
 
 // Cek apakah user sudah login
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 
-// Ambil nama dari session
+$idUser   = (int) $_SESSION['user_id'];
 $userName = $_SESSION['username'] ?? "Pengguna Spotifake";
 
 // Logika sapaan waktu otomatis
@@ -25,103 +26,45 @@ if ($jam >= 5 && $jam < 11) {
 
 $pageTitle = "Spotifake - Web Audio Player";
 
-// Data Rangkuman Aktivitas (2x3 Grid)
-$quickPicks = [
-    [
-        "title" => "Chill Lofi Beats",
-        "desc" => "48 Lagu • Mix Santai",
-        "img" => "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=300&auto=format&fit=crop",
-        "track" => "Chill Lofi Beats",
-        "artist" => "Lo-Fi Dreamer",
-        "duration" => "02:45"
-    ],
-    [
-        "title" => "Top Indonesian Hits 2026",
-        "desc" => "Tangga Lagu Mingguan",
-        "img" => "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=300&auto=format&fit=crop",
-        "track" => "Top Indonesian Hits 2026",
-        "artist" => "Indo Chart Radio",
-        "duration" => "03:22"
-    ],
-    [
-        "title" => "Deep Focus Synth",
-        "desc" => "Karya & Coding Mode",
-        "img" => "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=300&auto=format&fit=crop",
-        "track" => "Deep Focus Synth",
-        "artist" => "Cyber Pulse",
-        "duration" => "04:10"
-    ],
-    [
-        "title" => "Daily Mix 1",
-        "desc" => "Hindia, Feast, Pamungkas",
-        "img" => "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=300&auto=format&fit=crop",
-        "track" => "Evaluasi Hati",
-        "artist" => "Hindia & Feast",
-        "duration" => "03:40"
-    ],
-    [
-        "title" => "Koleksi Lagu Disukai",
-        "desc" => "128 Lagu Tersimpan",
-        "icon" => "bi-heart-fill",
-        "track" => "Midnight Romance",
-        "artist" => "The Night Owls",
-        "duration" => "03:15"
-    ],
-    [
-        "title" => "Weekly Discovery",
-        "desc" => "Diperbarui tiap Senin",
-        "img" => "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=300&auto=format&fit=crop",
-        "track" => "Discovery Beats #42",
-        "artist" => "Spotifake Curators",
-        "duration" => "02:58"
-    ]
+// Cover default bernuansa synthwave (karena tabel songs SDD tidak menyimpan kolom cover)[cite: 1]
+$defaultCovers = [
+    "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=400&auto=format&fit=crop"
 ];
 
-// Data Baru Saja Diputar
-$recentlyPlayed = [
-    [
-        "title" => "Midnight Echoes",
-        "artist" => "Arctic Mirage",
-        "time" => "03:52",
-        "genre" => "Synth",
-        "img" => "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400&auto=format&fit=crop"
-    ],
-    [
-        "title" => "Lembah Baku",
-        "artist" => "Kalandra",
-        "time" => "04:15",
-        "genre" => "Indie Pop",
-        "img" => "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=400&auto=format&fit=crop"
-    ],
-    [
-        "title" => "Resonansi Senja",
-        "artist" => "Jakarta Sunset Club",
-        "time" => "03:10",
-        "genre" => "Lo-fi",
-        "img" => "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=400&auto=format&fit=crop"
-    ],
-    [
-        "title" => "Pendar Renjana",
-        "artist" => "Luna Maya Synth",
-        "time" => "02:45",
-        "genre" => "Acoustic",
-        "img" => "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=400&auto=format&fit=crop"
-    ],
-    [
-        "title" => "Hujan di Sudut Kota",
-        "artist" => "Niskala Nada",
-        "time" => "04:02",
-        "genre" => "Chillout",
-        "img" => "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=400&auto=format&fit=crop"
-    ],
-    [
-        "title" => "Arus Frekuensi 2.0",
-        "artist" => "Subzero Lab",
-        "time" => "05:20",
-        "genre" => "Electronic",
-        "img" => "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=400&auto=format&fit=crop"
-    ]
-];
+// 1. Ambil SELURUH 41 lagu dari tabel songs[cite: 1]
+$stmtAllSongs = $pdo->query("SELECT * FROM songs ORDER BY title ASC");
+$dbAllSongs = $stmtAllSongs->fetchAll(PDO::FETCH_ASSOC);
+$totalSongsCount = count($dbAllSongs);
+
+// 2. Ambil 6 lagu pilihan untuk Rangkuman Aktivitas
+$stmtQuick = $pdo->query("SELECT * FROM songs ORDER BY id_song ASC LIMIT 6");
+$dbQuickPicks = $stmtQuick->fetchAll(PDO::FETCH_ASSOC);
+
+// 3. Ambil Lagu Disukai oleh user yang sedang login (Tabel likes)
+$stmtLiked = $pdo->prepare("
+    SELECT s.*, l.liked_at 
+    FROM songs s 
+    INNER JOIN likes l ON s.id_song = l.id_song 
+    WHERE l.id_user = ? 
+    ORDER BY l.liked_at DESC
+");
+$stmtLiked->execute([$idUser]);
+$dbLikedSongs = $stmtLiked->fetchAll(PDO::FETCH_ASSOC);
+$likedSongIds = array_column($dbLikedSongs, 'id_song');
+
+// 4. Ambil Daftar Koleksi / Playlist milik user (Tabel playlists)
+$stmtPlaylists = $pdo->prepare("SELECT * FROM playlists WHERE id_user = ? ORDER BY id_playlist DESC");
+$stmtPlaylists->execute([$idUser]);
+$userPlaylists = $stmtPlaylists->fetchAll(PDO::FETCH_ASSOC);
 
 // Data Rekomendasi Teratas
 $topRecommendations = [
@@ -170,37 +113,6 @@ $topRecommendations = [
         "img" => "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?q=80&w=300&auto=format&fit=crop"
     ]
 ];
-
-// Data Podcast
-$podcasts = [
-    [
-        "category" => "TEKNOLOGI WEB",
-        "duration" => "42 Menit",
-        "title" => "Eps. 84 • Arsitektur Web Audio API & Modern Streaming",
-        "speaker" => "Hadir bersama Calvin H. Winata",
-        "desc" => "Membahas arsitektur 3-tier sistem streaming modern, latensi transmisi berkas audio, dan integrasi HLS stream secure.",
-        "date" => "14 Okt 2026",
-        "img" => "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=300&auto=format&fit=crop"
-    ],
-    [
-        "category" => "DESAIN PRODUK",
-        "duration" => "38 Menit",
-        "title" => "Eps. 52 • Interface Design: Filosofi Glassmorphism & Micro-Interactions",
-        "speaker" => "Diskusi bersama Elsya N. & Mario",
-        "desc" => "Eksplorasi mendalam perancangan antarmuka pengguna berbasis 'Frozen Light', kontras warna icy cyan, dan ergonomi navigasi.",
-        "date" => "12 Okt 2026",
-        "img" => "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=300&auto=format&fit=crop"
-    ],
-    [
-        "category" => "INDUSTRI MUSIK",
-        "duration" => "51 Menit",
-        "title" => "Eps. 110 • Produksi Audio: Di Balik Layar Musik Indie Digital",
-        "speaker" => "Eksklusif bersama Tim Audio Studio",
-        "desc" => "Bagaimana produser independen menciptakan lanskap suara baru, teknik mastering synthwave modern, dan royalti digital 2026.",
-        "date" => "09 Okt 2026",
-        "img" => "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=300&auto=format&fit=crop"
-    ]
-];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -216,9 +128,38 @@ $podcasts = [
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
-    <!-- Base Dashboard & Share Modal CSS -->
-    <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css?v=1.2">
-    <link rel="stylesheet" href="../assets/css/pengguna/share-modal.css?v=1.2">
+    <!-- Custom User Dashboard CSS -->
+    <link rel="stylesheet" href="../assets/css/pengguna/dashboard-pengguna.css">
+
+    <style>
+        /* Tombol aksi kecil di kartu lagu untuk Simpan ke Koleksi */
+        .track-card { position: relative; }
+        .btn-add-playlist-card {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 5;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(15, 23, 42, 0.8);
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .btn-add-playlist-card:hover {
+            background: #0ea5e9;
+            color: #fff;
+            transform: scale(1.1);
+        }
+        .playlist-link.active-playlist {
+            color: #38bdf8 !important;
+            font-weight: 700;
+        }
+    </style>
 </head>
 
 <body>
@@ -227,7 +168,6 @@ $podcasts = [
 
         <!-- ==================== SIDEBAR (KIRI) ==================== -->
         <aside class="sidebar">
-            <!-- Brand Logo -->
             <a href="dashboard-pengguna.php" class="brand-wrapper">
                 <div class="brand-icon">
                     <i class="bi bi-soundwave"></i>
@@ -244,21 +184,15 @@ $podcasts = [
                     </a>
                 </li>
                 <li>
-                    <a href="pencarian.php" class="nav-link-custom">
+                    <a href="#cari" class="nav-link-custom" id="navSearchTrigger">
                         <i class="bi bi-search"></i>
                         <span>Cari</span>
                     </a>
                 </li>
                 <li>
-                    <a href="koleksi.php" class="nav-link-custom">
-                        <i class="bi bi-collection-play"></i>
-                        <span>Koleksi Saya</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="lagu-disukai.php" class="nav-link-custom">
+                    <a href="#koleksi-disukai" class="nav-link-custom">
                         <i class="bi bi-heart-fill text-danger"></i>
-                        <span>Lagu Disukai</span>
+                        <span>Lagu Disukai (<?= count($dbLikedSongs); ?>)</span>
                     </a>
                 </li>
                 <li>
@@ -269,30 +203,45 @@ $podcasts = [
                 </li>
             </ul>
 
-            <!-- Playlist Section -->
-            <div class="sidebar-heading">PLAYLISTS</div>
-            <ul class="playlist-list">
-                <li><a href="detail-playlist.php?playlist=chill-vibes" class="playlist-link">Chill Vibes 2026</a></li>
-                <li><a href="detail-playlist.php?playlist=weekly-top-50" class="playlist-link">Weekly Top 50</a></li>
-                <li><a href="detail-playlist.php?playlist=coding-session" class="playlist-link">Coding Session</a></li>
-                <li><a href="detail-playlist.php?playlist=night-drive" class="playlist-link">Night Drive Synth</a></li>
+            <!-- Playlist / Koleksi Pengguna dari Database -->
+            <div class="sidebar-heading d-flex justify-content-between align-items-center pe-3">
+                <span>KOLEKSI SAYA</span>
+                <button class="btn btn-sm text-info p-0 border-0" data-bs-toggle="modal" data-bs-target="#modalCreatePlaylist" title="Tambah Koleksi Baru">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </div>
+            <ul class="playlist-list" id="sidebarPlaylistList">
+                <?php if (!empty($userPlaylists)): ?>
+                    <?php foreach ($userPlaylists as $pl): ?>
+                        <li>
+                            <a href="#detail-koleksi" class="playlist-link view-playlist-btn" 
+                               data-id="<?= $pl['id_playlist']; ?>" 
+                               data-name="<?= htmlspecialchars($pl['playlist_name']); ?>"
+                               data-desc="<?= htmlspecialchars($pl['description'] ?? ''); ?>">
+                                <i class="bi bi-music-note-list me-2 text-info"></i><?= htmlspecialchars($pl['playlist_name']); ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li class="text-muted small px-2" id="emptyPlaylistHint">Belum ada koleksi</li>
+                <?php endif; ?>
             </ul>
         </aside>
 
         <!-- ==================== MAIN CONTENT WRAPPER ==================== -->
         <div class="main-wrapper">
 
-            <!-- Topbar (Sticky Atas) -->
+            <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
                     <div class="nav-arrows">
-                        <button class="nav-arrow-btn" title="Kembali"><i class="bi bi-chevron-left"></i></button>
-                        <button class="nav-arrow-btn" title="Maju"><i class="bi bi-chevron-right"></i></button>
+                        <button class="nav-arrow-btn" onclick="history.back()" title="Kembali"><i class="bi bi-chevron-left"></i></button>
+                        <button class="nav-arrow-btn" onclick="history.forward()" title="Maju"><i class="bi bi-chevron-right"></i></button>
                     </div>
 
                     <div class="topbar-search">
                         <i class="bi bi-search search-icon"></i>
-                        <input type="text" id="searchInput" placeholder="Lagu, artis, atau podcast...">
+                        <input type="text" id="searchInput" placeholder="Cari dari <?= $totalSongsCount; ?> lagu, artis, atau genre...">
                         <span class="shortcut-badge">⌘K</span>
                     </div>
                 </div>
@@ -304,12 +253,12 @@ $podcasts = [
                             <span class="user-name"><?= htmlspecialchars($userName); ?> <i class="bi bi-caret-down-fill" style="font-size: 0.8em; margin-left:3px;"></i></span>
                         </div>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" style="background-color: #1a1a1a; border: 1px solid #333;">
-                            <li><a class="dropdown-item text-white" href="#"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
-                            <li><a class="dropdown-item text-white" href="#"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+                            <li><a class="dropdown-item text-white" href="profil.php"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
+                            <li><a class="dropdown-item text-white" href="pengaturan.php"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
                             <li>
                                 <hr class="dropdown-divider border-secondary">
                             </li>
-                            <li><a class="dropdown-item text-danger fw-bold" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+                            <li><a class="dropdown-item text-danger fw-bold" href="../logout.php"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
                         </ul>
                     </div>
                 </div>
@@ -318,7 +267,7 @@ $podcasts = [
             <!-- Scrollable Content Body -->
             <main class="content-body">
 
-                <!-- 1. Hero Banner: Frostwave Vol. 1 -->
+                <!-- 1. Hero Banner -->
                 <section class="hero-banner">
                     <div class="hero-banner-bg"></div>
 
@@ -334,14 +283,18 @@ $podcasts = [
                         </p>
 
                         <div class="hero-actions">
-                            <button class="btn-hero-play" data-track="Frostwave Vol. 1" data-artist="Arctic Mirage" data-duration="04:20" data-img="https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?q=80&w=300&auto=format&fit=crop">
+                            <?php $heroSong = $dbQuickPicks[0] ?? null; ?>
+                            <button class="btn-hero-play play-trigger" 
+                                    data-id="<?= $heroSong['id_song'] ?? 0; ?>"
+                                    data-track="<?= htmlspecialchars($heroSong['title'] ?? 'Frostwave Vol. 1'); ?>" 
+                                    data-artist="<?= htmlspecialchars($heroSong['artist'] ?? 'Arctic Mirage'); ?>" 
+                                    data-duration="<?= isset($heroSong['duration']) ? gmdate('i:s', (int)$heroSong['duration']) : '00:30'; ?>" 
+                                    data-img="https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?q=80&w=300&auto=format&fit=crop"
+                                    data-audio="<?= htmlspecialchars($heroSong['file_path'] ?? ''); ?>">
                                 <i class="bi bi-play-fill fs-5"></i> Dengarkan Sekarang
                             </button>
-                            <button class="btn-hero-fav" id="btnHeroFav">
-                                <i class="bi bi-heart"></i> Tambahkan ke Favorit
-                            </button>
-                            <button class="btn-hero-more" title="Opsi Lainnya">
-                                <i class="bi bi-three-dots"></i>
+                            <button class="btn-hero-fav" data-bs-toggle="modal" data-bs-target="#modalCreatePlaylist">
+                                <i class="bi bi-folder-plus"></i> Buat Koleksi Baru
                             </button>
                         </div>
                     </div>
@@ -353,36 +306,54 @@ $podcasts = [
                             <div class="waveform-bar"></div>
                             <div class="waveform-bar"></div>
                         </div>
-                        <span>Lossless 24-bit / 96kHz</span>
+                        <span><?= $totalSongsCount; ?> Lagu Tersedia</span>
                     </div>
                 </section>
 
-                <!-- 2. Section: Selamat Malam, Alya (Rangkuman Aktivitas 2x3 Grid) -->
+                <!-- SECTION DINAMIS: Isi Koleksi / Playlist Terpilih (Muncul saat playlist di sidebar diklik) -->
+                <section class="dashboard-section d-none" id="detail-koleksi">
+                    <div class="section-header-row">
+                        <div>
+                            <span class="section-pretitle text-info">KOLEKSI PILIHANMU</span>
+                            <h2 class="section-main-title" id="activePlaylistTitle">Nama Koleksi</h2>
+                            <div class="section-subtitle" id="activePlaylistDesc">Daftar lagu yang tersimpan di koleksi ini</div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-light" id="btnClosePlaylistView">
+                            <i class="bi bi-x-lg me-1"></i> Tutup Tampilan Koleksi
+                        </button>
+                    </div>
+                    <div class="track-cards-grid" id="activePlaylistGrid"></div>
+                </section>
+
+                <!-- 2. Section: Rangkuman Aktivitas / Sering Diputar (2x3 Grid) -->
                 <section class="dashboard-section">
                     <div class="section-header-row">
                         <div>
-                            <span class="section-pretitle">RANGKUMAN AKTIVITAS</span>
+                            <span class="section-pretitle">SERING DIPUTAR & PILIHAN CEPAT</span>
                             <h2 class="section-main-title"><?= $sapaan; ?>, <?= htmlspecialchars($userName); ?></h2>
                         </div>
                         <div class="sync-status">
-                            Sinkronisasi Audio: <span class="text-info fw-bold">Aktif (2026.1C)</span>
+                            Sinkronisasi Audio: <span class="text-info fw-bold">Aktif (<?= $totalSongsCount; ?> Lagu)</span>
                         </div>
                     </div>
 
                     <div class="quick-grid">
-                        <?php foreach ($quickPicks as $pick): ?>
-                            <div class="quick-card play-trigger" data-track="<?= htmlspecialchars($pick['track']); ?>" data-artist="<?= htmlspecialchars($pick['artist']); ?>" data-duration="<?= htmlspecialchars($pick['duration']); ?>" data-img="<?= isset($pick['img']) ? htmlspecialchars($pick['img']) : 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=300&auto=format&fit=crop'; ?>">
-                                <?php if (isset($pick['img'])): ?>
-                                    <img src="<?= htmlspecialchars($pick['img']); ?>" alt="<?= htmlspecialchars($pick['title']); ?>" class="quick-card-img">
-                                <?php else: ?>
-                                    <div class="quick-card-icon">
-                                        <i class="bi <?= htmlspecialchars($pick['icon']); ?>"></i>
-                                    </div>
-                                <?php endif; ?>
+                        <?php foreach ($dbQuickPicks as $index => $pick): 
+                            $formattedDuration = gmdate("i:s", (int)$pick['duration']);
+                            $coverImg = $defaultCovers[$index % count($defaultCovers)];
+                        ?>
+                            <div class="quick-card play-trigger" 
+                                 data-id="<?= $pick['id_song']; ?>"
+                                 data-track="<?= htmlspecialchars($pick['title']); ?>" 
+                                 data-artist="<?= htmlspecialchars($pick['artist']); ?>" 
+                                 data-duration="<?= $formattedDuration; ?>" 
+                                 data-img="<?= $coverImg; ?>"
+                                 data-audio="<?= htmlspecialchars($pick['file_path']); ?>">
+                                <img src="<?= $coverImg; ?>" alt="<?= htmlspecialchars($pick['title']); ?>" class="quick-card-img">
 
                                 <div class="quick-card-info">
                                     <div class="quick-card-title"><?= htmlspecialchars($pick['title']); ?></div>
-                                    <div class="quick-card-desc"><?= htmlspecialchars($pick['desc']); ?></div>
+                                    <div class="quick-card-desc"><?= htmlspecialchars($pick['artist']); ?> &bull; <?= htmlspecialchars($pick['genre'] ?? 'Music'); ?></div>
                                 </div>
 
                                 <div class="quick-card-play">
@@ -393,52 +364,120 @@ $podcasts = [
                     </div>
                 </section>
 
-                <!-- 3. Section: Baru Saja Diputar -->
-                <section class="dashboard-section">
+                <!-- 3. Section: Koleksi Lagu Disukai (Dari Tabel likes)[cite: 4] -->
+                <section class="dashboard-section" id="koleksi-disukai">
                     <div class="section-header-row">
                         <div>
-                            <h2 class="section-main-title">Baru Saja Diputar</h2>
-                            <div class="section-subtitle">Lanjutkan lagu terakhir dari riwayat pemutaranmu</div>
+                            <span class="section-pretitle text-danger">FAVORIT PRIBADI</span>
+                            <h2 class="section-main-title">Lagu Disukai (<span id="likedCountBadge"><?= count($dbLikedSongs); ?></span>)</h2>
+                            <div class="section-subtitle">Klik ikon hati di pemutar bawah untuk menambah atau menghapus lagu favorit</div>
                         </div>
-                        <a href="#semua-riwayat" class="section-link">Lihat Semua</a>
+                    </div>
+
+                    <div class="track-cards-grid" id="likedSongsGrid">
+                        <?php if (!empty($dbLikedSongs)): ?>
+                            <?php foreach ($dbLikedSongs as $index => $liked): 
+                                $formattedDuration = gmdate("i:s", (int)$liked['duration']);
+                                $coverImg = $defaultCovers[$index % count($defaultCovers)];
+                            ?>
+                                <div class="track-card play-trigger" 
+                                     data-id="<?= $liked['id_song']; ?>"
+                                     data-track="<?= htmlspecialchars($liked['title']); ?>" 
+                                     data-artist="<?= htmlspecialchars($liked['artist']); ?>" 
+                                     data-duration="<?= $formattedDuration; ?>" 
+                                     data-img="<?= $coverImg; ?>"
+                                     data-audio="<?= htmlspecialchars($liked['file_path']); ?>">
+                                    <button type="button" class="btn-add-playlist-card open-add-playlist" 
+                                            data-song-id="<?= $liked['id_song']; ?>" 
+                                            data-song-title="<?= htmlspecialchars($liked['title']); ?>"
+                                            title="Simpan ke Koleksi">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                    <div class="track-img-wrapper">
+                                        <img src="<?= $coverImg; ?>" alt="<?= htmlspecialchars($liked['title']); ?>" class="track-img">
+                                        <div class="track-play-btn">
+                                            <i class="bi bi-play-fill"></i>
+                                        </div>
+                                    </div>
+                                    <div class="track-card-title"><?= htmlspecialchars($liked['title']); ?></div>
+                                    <div class="track-card-artist"><?= htmlspecialchars($liked['artist']); ?></div>
+                                    <div class="track-card-meta">
+                                        <span class="text-danger"><i class="bi bi-heart-fill"></i> Disukai</span>
+                                        <span>&bull;</span>
+                                        <span><?= htmlspecialchars($liked['genre'] ?? 'Music'); ?></span>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="text-secondary small" id="emptyLikedMsg">
+                                Belum ada lagu yang disukai. Putar lagu apa saja lalu klik ikon <i class="bi bi-heart text-danger"></i> di pemutar bawah.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </section>
+
+                <!-- 4. Section: Semua Katalog Lagu (Seluruh 41 Lagu dari Database)[cite: 1] -->
+                <section class="dashboard-section" id="semua-katalog">
+                    <div class="section-header-row">
+                        <div>
+                            <span class="section-pretitle">KATALOG LENGKAP DATABASE</span>
+                            <h2 class="section-main-title">Semua Lagu (<?= $totalSongsCount; ?> Trek)</h2>
+                            <div class="section-subtitle">Klik kartu untuk memutar audio, atau tekan tombol <strong>+</strong> di pojok kartu untuk memasukkan ke koleksi</div>
+                        </div>
                     </div>
 
                     <div class="track-cards-grid">
-                        <?php foreach ($recentlyPlayed as $track): ?>
-                            <div class="track-card play-trigger" data-track="<?= htmlspecialchars($track['title']); ?>" data-artist="<?= htmlspecialchars($track['artist']); ?>" data-duration="<?= htmlspecialchars($track['time']); ?>" data-img="<?= htmlspecialchars($track['img']); ?>">
+                        <?php foreach ($dbAllSongs as $index => $song): 
+                            $formattedDuration = gmdate("i:s", (int)$song['duration']);
+                            $coverImg = $defaultCovers[$index % count($defaultCovers)];
+                        ?>
+                            <div class="track-card play-trigger" 
+                                 data-id="<?= $song['id_song']; ?>"
+                                 data-track="<?= htmlspecialchars($song['title']); ?>" 
+                                 data-artist="<?= htmlspecialchars($song['artist']); ?>" 
+                                 data-duration="<?= $formattedDuration; ?>" 
+                                 data-img="<?= $coverImg; ?>"
+                                 data-audio="<?= htmlspecialchars($song['file_path']); ?>">
+                                
+                                <!-- Tombol Tambah ke Koleksi -->
+                                <button type="button" class="btn-add-playlist-card open-add-playlist" 
+                                        data-song-id="<?= $song['id_song']; ?>" 
+                                        data-song-title="<?= htmlspecialchars($song['title']); ?>"
+                                        title="Tambahkan ke Koleksi">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+
                                 <div class="track-img-wrapper">
-                                    <img src="<?= htmlspecialchars($track['img']); ?>" alt="<?= htmlspecialchars($track['title']); ?>" class="track-img">
+                                    <img src="<?= $coverImg; ?>" alt="<?= htmlspecialchars($song['title']); ?>" class="track-img">
                                     <div class="track-play-btn">
                                         <i class="bi bi-play-fill"></i>
                                     </div>
                                 </div>
-                                <div class="track-card-title"><?= htmlspecialchars($track['title']); ?></div>
-                                <div class="track-card-artist"><?= htmlspecialchars($track['artist']); ?></div>
+                                <div class="track-card-title"><?= htmlspecialchars($song['title']); ?></div>
+                                <div class="track-card-artist"><?= htmlspecialchars($song['artist']); ?></div>
                                 <div class="track-card-meta">
-                                    <span><?= htmlspecialchars($track['time']); ?></span>
+                                    <span><?= $formattedDuration; ?></span>
                                     <span>&bull;</span>
-                                    <span><?= htmlspecialchars($track['genre']); ?></span>
+                                    <span><?= htmlspecialchars($song['genre'] ?? 'Music'); ?></span>
                                 </div>
                             </div>
                         <?php endforeach; ?>
                     </div>
                 </section>
 
-                <!-- 4. Section: Rekomendasi Teratas Untukmu -->
+                <!-- 5. Section: Rekomendasi Teratas Untukmu -->
                 <section class="dashboard-section">
                     <div class="section-header-row">
                         <div>
                             <h2 class="section-main-title">Rekomendasi Teratas Untukmu</h2>
                             <div class="section-subtitle">Kurasi khusus berdasarkan riwayat musik dan playlist favorit Anda</div>
                         </div>
-                        <div class="nav-arrows">
-                            <button class="nav-arrow-btn"><i class="bi bi-chevron-left"></i></button>
-                            <button class="nav-arrow-btn"><i class="bi bi-chevron-right"></i></button>
-                        </div>
                     </div>
 
                     <div class="rec-grid">
-                        <?php foreach ($topRecommendations as $rec): ?>
+                        <?php foreach ($topRecommendations as $index => $rec): 
+                            $sampleSong = $dbAllSongs[($index * 5) % max(1, $totalSongsCount)] ?? [];
+                        ?>
                             <div class="rec-card">
                                 <div class="rec-badge-row">
                                     <span class="rec-badge-tag <?= $rec['badge_class']; ?>"><?= htmlspecialchars($rec['tag']); ?></span>
@@ -461,50 +500,16 @@ $podcasts = [
                                     <button class="btn-rec-action" onclick="showToast('<?= htmlspecialchars($rec['name']); ?>: <?= htmlspecialchars($rec['action']); ?> berhasil!')">
                                         <?= htmlspecialchars($rec['action']); ?>
                                     </button>
-                                    <div class="rec-play-btn play-trigger" data-track="<?= htmlspecialchars($rec['name']); ?>" data-artist="Kurasi Rekomendasi" data-duration="03:45" data-img="<?= htmlspecialchars($rec['img']); ?>" title="Putar">
+                                    <div class="rec-play-btn play-trigger" 
+                                         data-id="<?= $sampleSong['id_song'] ?? 0; ?>"
+                                         data-track="<?= htmlspecialchars($rec['name']); ?>" 
+                                         data-artist="Kurasi Rekomendasi" 
+                                         data-duration="00:30" 
+                                         data-img="<?= htmlspecialchars($rec['img']); ?>" 
+                                         data-audio="<?= htmlspecialchars($sampleSong['file_path'] ?? ''); ?>"
+                                         title="Putar">
                                         <i class="bi bi-play-fill fs-5"></i>
                                     </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </section>
-
-                <!-- 5. Section: Podcast & Obrolan Trending -->
-                <section class="dashboard-section">
-                    <div class="section-header-row">
-                        <div>
-                            <h2 class="section-main-title">Podcast & Obrolan Trending</h2>
-                            <div class="section-subtitle">Wawasan teknologi, obrolan kreatif musik digital, dan cerita terkini</div>
-                        </div>
-                        <a href="#eksplor-podcast" class="section-link">Eksplor Podcast</a>
-                    </div>
-
-                    <div class="podcast-grid">
-                        <?php foreach ($podcasts as $podcast): ?>
-                            <div class="podcast-card">
-                                <div class="podcast-top-meta">
-                                    <span class="podcast-tag"><?= htmlspecialchars($podcast['category']); ?></span>
-                                    <span class="podcast-duration"><?= htmlspecialchars($podcast['duration']); ?></span>
-                                </div>
-
-                                <div class="podcast-main">
-                                    <img src="<?= htmlspecialchars($podcast['img']); ?>" alt="<?= htmlspecialchars($podcast['title']); ?>" class="podcast-img">
-                                    <div>
-                                        <h4 class="podcast-title"><?= htmlspecialchars($podcast['title']); ?></h4>
-                                        <p class="podcast-author"><?= htmlspecialchars($podcast['speaker']); ?></p>
-                                    </div>
-                                </div>
-
-                                <p class="podcast-desc">
-                                    <?= htmlspecialchars($podcast['desc']); ?>
-                                </p>
-
-                                <div class="podcast-footer">
-                                    <span class="podcast-date"><?= htmlspecialchars($podcast['date']); ?></span>
-                                    <button class="btn-podcast-play play-trigger" data-track="<?= htmlspecialchars($podcast['title']); ?>" data-artist="<?= htmlspecialchars($podcast['speaker']); ?>" data-duration="<?= htmlspecialchars($podcast['duration']); ?>" data-img="<?= htmlspecialchars($podcast['img']); ?>">
-                                        <i class="bi bi-play-fill"></i> Putar Episode
-                                    </button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -516,13 +521,13 @@ $podcasts = [
                     <div>
                         <span class="status-dot"></span>
                         <strong class="text-white">Server Audio: Aktif</strong>
-                        <span class="text-muted ms-1">[200 OK &bull; MySQL v8.0]</span>
+                        <span class="text-muted ms-1">[200 OK &bull; <?= $totalSongsCount; ?> Lagu Terindeks]</span>
                     </div>
                     <div>
-                        Buffer: <span class="text-white fw-bold">100% Caching</span>
+                        Koleksi: <span class="text-white fw-bold"><?= count($userPlaylists); ?> Playlist</span>
                     </div>
                     <div>
-                        Protokol: <span class="text-info fw-bold">HLS Stream Secure</span>
+                        Disukai: <span class="text-info fw-bold"><?= count($dbLikedSongs); ?> Lagu</span>
                     </div>
                     <div class="text-muted">
                         Spotifake Engine v1.0
@@ -534,19 +539,17 @@ $podcasts = [
 
         <!-- ==================== FIXED BOTTOM PLAYER BAR ==================== -->
         <footer class="bottom-player-bar">
-            <!-- Left: Current Track Info -->
             <div class="player-left">
                 <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400&auto=format&fit=crop" alt="Track Cover" class="player-cover" id="currentCover">
                 <div class="player-track-info">
-                    <div class="player-title" id="currentTitle">Midnight Echoes</div>
-                    <div class="player-artist" id="currentArtist">Arctic Mirage</div>
+                    <div class="player-title" id="currentTitle">Pilih lagu untuk diputar</div>
+                    <div class="player-artist" id="currentArtist">Spotifake Audio Engine</div>
                 </div>
-                <button class="btn-player-like" id="btnLike" title="Sukai Lagu">
+                <button class="btn-player-like" id="btnLike" data-song-id="0" title="Sukai Lagu">
                     <i class="bi bi-heart"></i>
                 </button>
             </div>
 
-            <!-- Center: Player Controls & Seekbar -->
             <div class="player-center">
                 <div class="player-controls">
                     <button class="control-btn" id="btnShuffle" title="Acak"><i class="bi bi-shuffle"></i></button>
@@ -557,20 +560,18 @@ $podcasts = [
                 </div>
 
                 <div class="player-seekbar">
-                    <span class="seek-time" id="currentTimeText">01:45</span>
+                    <span class="seek-time" id="currentTimeText">00:00</span>
                     <div class="seek-bar-track" id="seekBar">
-                        <div class="seek-progress" id="seekProgress">
+                        <div class="seek-progress" id="seekProgress" style="width: 0%;">
                             <div class="seek-thumb"></div>
                         </div>
                     </div>
-                    <span class="seek-time" id="durationTimeText">03:52</span>
+                    <span class="seek-time" id="durationTimeText">00:30</span>
                 </div>
             </div>
 
-            <!-- Right: Secondary Controls & Volume -->
             <div class="player-right">
-                <button class="control-btn" data-bs-toggle="modal" data-bs-target="#shareModal" title="Bagikan Lagu Ini"><i class="bi bi-share"></i></button>
-                <button class="control-btn" id="btnQueue" title="Antrean Putar"><i class="bi bi-view-list"></i></button>
+                <button class="control-btn" id="btnAddCurrentToPlaylist" title="Simpan Lagu Ini ke Koleksi"><i class="bi bi-folder-plus"></i></button>
                 <div class="volume-wrapper">
                     <button class="control-btn" id="btnVolume"><i class="bi bi-volume-up" id="volumeIcon"></i></button>
                     <div class="volume-bar-track" id="volumeBar">
@@ -586,65 +587,85 @@ $podcasts = [
             <span id="toastMessage">Pemberitahuan</span>
         </div>
 
-        <!-- ==================== MODAL BAGIKAN (UI-005C) ==================== -->
-        <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered share-modal-dialog">
-                <div class="modal-content share-modal-content">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-share-fill text-info fs-5"></i>
-                            <h5 class="fw-bold mb-0 text-white">Bagikan Musik</h5>
+    </div>
+
+    <!-- ==================== MODAL 1: BUAT KOLEKSI BARU ==================== -->
+    <div class="modal fade" id="modalCreatePlaylist" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-white" style="background: #131c2e; border: 1px solid rgba(56, 189, 248, 0.3);">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title"><i class="bi bi-music-note-list text-info me-2"></i>Buat Koleksi Baru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="formCreatePlaylist">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-white">Nama Koleksi</label>
+                            <input type="text" name="playlist_name" class="form-control bg-dark text-white fw-bold border-secondary" placeholder="Contoh: Fokus Ngoding Malam" required>
                         </div>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-
-                    <p class="text-secondary small mb-3">Bagikan tautan langsung atau bagikan ke media sosial favoritmu:</p>
-
-                    <div class="share-url-box">
-                        <input type="text" id="shareUrlInput" class="share-url-input" value="https://spotifake.app/track/midnight-echoes" readonly>
-                        <button type="button" class="btn-copy-url" onclick="copyShareLink()">
-                            <i class="bi bi-clipboard me-1"></i> Salin
-                        </button>
-                    </div>
-
-                    <div class="share-social-grid">
-                        <a href="https://wa.me/?text=Dengarkan%20lagu%20ini%20di%20Spotifake:%20https://spotifake.app" target="_blank" class="share-social-btn wa">
-                            <i class="bi bi-whatsapp"></i>
-                            <span>WhatsApp</span>
-                        </a>
-                        <a href="https://t.me/share/url?url=https://spotifake.app" target="_blank" class="share-social-btn tg">
-                            <i class="bi bi-telegram"></i>
-                            <span>Telegram</span>
-                        </a>
-                        <a href="https://twitter.com/intent/tweet?text=Dengarkan%20lagu%20di%20Spotifake" target="_blank" class="share-social-btn tw">
-                            <i class="bi bi-twitter-x"></i>
-                            <span>Twitter / X</span>
-                        </a>
-                        <a href="javascript:void(0)" onclick="showToast('Tautan disalin untuk Instagram Stories!')" class="share-social-btn ig">
-                            <i class="bi bi-instagram"></i>
-                            <span>Instagram</span>
-                        </a>
-                    </div>
-
-                    <div class="qr-preview-box">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://spotifake.app" alt="QR Code" class="qr-code-img">
-                        <div>
-                            <div class="fw-bold text-white small">Scan & Play Instan</div>
-                            <div class="text-secondary small">Arahkan kamera smartphone untuk langsung memutar di perangkat lain.</div>
+                        <div class="mb-2">
+                            <label class="form-label fw-bold text-white">Deskripsi (Opsional)</label>
+                            <textarea name="description" class="form-control bg-dark text-white fw-bold border-secondary" rows="2" placeholder="Catatan singkat tentang koleksi ini..."></textarea>
                         </div>
                     </div>
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-info text-dark fw-bold">Simpan Koleksi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 2: TAMBAH LAGU KE KOLEKSI ==================== -->
+    <div class="modal fade" id="modalAddToPlaylist" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-white" style="background: #131c2e; border: 1px solid rgba(56, 189, 248, 0.3);">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title"><i class="bi bi-folder-plus text-info me-2"></i>Simpan ke Koleksi</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-secondary mb-3">Pilih koleksi tujuan untuk lagu: <strong class="text-info" id="selectedSongForPlaylist">-</strong></p>
+                    <input type="hidden" id="targetSongIdInput" value="0">
+                    
+                    <div id="playlistSelectionList" class="d-grid gap-2">
+                        <?php if (!empty($userPlaylists)): ?>
+                            <?php foreach ($userPlaylists as $pl): ?>
+                                <button type="button" class="btn btn-outline-info text-start d-flex justify-content-between align-items-center confirm-add-to-playlist" data-playlist-id="<?= $pl['id_playlist']; ?>">
+                                    <span><i class="bi bi-music-note-beamed me-2"></i><?= htmlspecialchars($pl['playlist_name']); ?></span>
+                                    <span class="badge bg-info text-dark">+ Tambah</span>
+                                </button>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="alert alert-dark border-secondary text-center mb-0">
+                                Kamu belum memiliki koleksi. Buat koleksi baru terlebih dahulu!
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-sm btn-info text-dark fw-bold" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalCreatePlaylist">
+                        <i class="bi bi-plus-lg me-1"></i> Buat Koleksi Baru
+                    </button>
                 </div>
             </div>
         </div>
-
     </div>
+
+    <!-- Simpan daftar ID lagu yang sudah disukai untuk sinkronisasi ikon hati -->
+    <script>
+        window.LIKED_SONG_IDS = <?= json_encode(array_map('intval', $likedSongIds)); ?>;
+    </script>
+
+    <!-- Elemen Audio HTML5 Utama -->
+    <audio id="audioPlayer" preload="metadata"></audio>
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Modular JS -->
-    <script src="../assets/js/pengguna/player.js"></script>
-    <script src="../assets/js/pengguna/share-modal.js"></script>
+    <!-- Custom User JS (Anti-Cache) -->
+    <script src="../assets/js/pengguna/script.js?v=<?= time(); ?>"></script>
 </body>
 
 </html>

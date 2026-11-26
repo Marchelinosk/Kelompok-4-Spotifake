@@ -262,7 +262,7 @@ $podcasts = [
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link-custom" id="navCreatePlaylist">
+                    <a href="koleksi.php?action=create" class="nav-link-custom" id="navCreatePlaylist">
                         <i class="bi bi-plus-square"></i>
                         <span>Buat Playlist</span>
                     </a>

@@ -232,7 +232,7 @@ $likedSongsList = [
                     <div class="d-flex align-items-center gap-3">
                         <span class="text-muted small">Urutan:</span>
                         <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle text-white rounded-pill px-3" type="button" data-bs-toggle="dropdown">
+                            <button class="btn-sort-dropdown dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                 Kustom Terbaru
                             </button>
                             <ul class="dropdown-menu dropdown-menu-dark">

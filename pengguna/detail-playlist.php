@@ -2,10 +2,12 @@
 session_start();
 require_once '../config/database.php';
 
-$userName = isset($_SESSION['username']) ? $_SESSION['username'] : "Alya Aurelia";
+$userName = isset($_SESSION['username']) ? $_SESSION['username'] : "elsyanrr_";
 
-// Tangkap parameter slug atau ID playlist
-$playlistSlug = isset($_GET['playlist']) ? $_GET['playlist'] : 'chill-vibes';
+// Tangkap parameter slug, title, desc
+$playlistSlug = isset($_GET['playlist']) ? strtolower(trim($_GET['playlist'])) : 'chill-vibes';
+$customTitle = isset($_GET['title']) && trim($_GET['title']) !== '' ? trim($_GET['title']) : null;
+$customDesc = isset($_GET['desc']) && trim($_GET['desc']) !== '' ? trim($_GET['desc']) : null;
 
 // Pilihan Data Playlist
 $playlistsData = [
@@ -39,11 +41,47 @@ $playlistsData = [
     ]
 ];
 
-$currentPlaylist = isset($playlistsData[$playlistSlug]) ? $playlistsData[$playlistSlug] : $playlistsData['chill-vibes'];
+// Cek apakah playlist bawaan atau buatan pengguna
+if (isset($playlistsData[$playlistSlug])) {
+    $currentPlaylist = $playlistsData[$playlistSlug];
+    $isCustom = false;
+} else {
+    // Playlist buatan user (seperti 'elsya')
+    $playlistTitle = $customTitle ? $customTitle : ucwords(str_replace('-', ' ', $playlistSlug));
+    $playlistDesc = $customDesc ? $customDesc : "Playlist pribadi dibuat oleh " . $userName;
+    $currentPlaylist = [
+        'title' => $playlistTitle,
+        'desc' => $playlistDesc,
+        'cover' => 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop',
+        'songs_count' => '2 lagu',
+        'duration' => '08:37'
+    ];
+    $isCustom = true;
+}
+
 $pageTitle = $currentPlaylist['title'] . " - Spotifake";
 
-// Data Lagu di dalam Playlist
-$playlistSongs = [
+// Data Lagu di dalam Playlist (Memiliki lagu awalan untuk playlist baru agar tidak kosong)
+$playlistSongs = $isCustom ? [
+    [
+        "id" => 1,
+        "title" => "Gelombang Fajar",
+        "artist" => "Elsya Handayani",
+        "album" => "Cahaya Pertama",
+        "date_added" => "Baru saja",
+        "duration" => "04:45",
+        "cover" => "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=300&auto=format&fit=crop"
+    ],
+    [
+        "id" => 2,
+        "title" => "Midnight Echoes",
+        "artist" => "Arctic Mirage",
+        "album" => "Northern Lights Odyssey",
+        "date_added" => "Baru saja",
+        "duration" => "03:52",
+        "cover" => "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=300&auto=format&fit=crop"
+    ]
+] : [
     [
         "id" => 1,
         "title" => "Midnight Echoes",
@@ -149,7 +187,7 @@ $playlistSongs = [
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link-custom" id="navCreatePlaylist">
+                    <a href="koleksi.php?action=create" class="nav-link-custom" id="navCreatePlaylist">
                         <i class="bi bi-plus-square"></i>
                         <span>Buat Playlist</span>
                     </a>
@@ -209,7 +247,9 @@ $playlistSongs = [
                     <img src="<?= htmlspecialchars($currentPlaylist['cover']); ?>" alt="Cover Playlist" class="playlist-cover-big">
 
                     <div class="playlist-header-info">
-                        <span class="playlist-type-tag">PUBLIC PLAYLIST &bull; SPOTIFAKE CURATION</span>
+                        <span class="playlist-type-tag">
+                            <?= $isCustom ? '<i class="bi bi-person-check-fill text-info me-1"></i>PLAYLIST PRIBADI &bull; OLEH ' . strtoupper(htmlspecialchars($userName)) : 'PUBLIC PLAYLIST &bull; SPOTIFAKE CURATION'; ?>
+                        </span>
                         <h1 class="playlist-title-big"><?= htmlspecialchars($currentPlaylist['title']); ?></h1>
                         <p class="playlist-desc-text">
                             <?= htmlspecialchars($currentPlaylist['desc']); ?>
@@ -217,9 +257,9 @@ $playlistSongs = [
                         <div class="playlist-meta-row">
                             <span class="fw-bold text-white"><?= htmlspecialchars($userName); ?></span>
                             <span>&bull;</span>
-                            <span><?= htmlspecialchars($currentPlaylist['songs_count']); ?></span>
+                            <span id="playlistHeaderCount"><?= count($playlistSongs); ?> lagu</span>
                             <span>&bull;</span>
-                            <span class="text-secondary"><?= htmlspecialchars($currentPlaylist['duration']); ?></span>
+                            <span class="text-secondary" id="playlistHeaderDuration"><?= $isCustom && count($playlistSongs) === 0 ? '0 mnt' : htmlspecialchars($currentPlaylist['duration']); ?></span>
                         </div>
                     </div>
                 </div>
@@ -227,7 +267,8 @@ $playlistSongs = [
                 <!-- 2. Action Controls Bar -->
                 <div class="playlist-action-bar">
                     <div class="action-bar-left">
-                        <button class="btn-play-all play-trigger" data-track="<?= htmlspecialchars($playlistSongs[0]['title']); ?>" data-artist="<?= htmlspecialchars($playlistSongs[0]['artist']); ?>" data-duration="<?= htmlspecialchars($playlistSongs[0]['duration']); ?>" data-img="<?= htmlspecialchars($playlistSongs[0]['cover']); ?>" title="Putar Semua">
+                        <?php $firstSong = !empty($playlistSongs) ? $playlistSongs[0] : ['title' => $currentPlaylist['title'], 'artist' => $userName, 'duration' => '03:00', 'cover' => $currentPlaylist['cover']]; ?>
+                        <button class="btn-play-all play-trigger" id="btnPlayAllPlaylist" data-track="<?= htmlspecialchars($firstSong['title']); ?>" data-artist="<?= htmlspecialchars($firstSong['artist']); ?>" data-duration="<?= htmlspecialchars($firstSong['duration']); ?>" data-img="<?= htmlspecialchars($firstSong['cover']); ?>" title="Putar Semua">
                             <i class="bi bi-play-fill"></i>
                         </button>
                         <button class="btn-action-round" id="btnFollowPlaylist" onclick="toggleFollowPlaylist(this)" title="Simpan ke Koleksi">
@@ -249,18 +290,22 @@ $playlistSongs = [
                 </div>
 
                 <!-- 3. Form Tambah Lagu ke Playlist (Sesuai SDD UI-005) -->
-                <div id="addSongBox" class="mb-4 p-4 rounded-4" style="display: none; background: rgba(14, 23, 42, 0.75); border: 1px dashed var(--border-cyan);">
+                <div id="addSongBox" class="mb-4 p-4 rounded-4" style="display: <?= $isCustom ? 'block' : 'none'; ?>; background: rgba(14, 23, 42, 0.75); border: 1px dashed var(--border-cyan);">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-white mb-0"><i class="bi bi-search text-info me-2"></i>Cari Lagu untuk Ditambahkan ke Playlist</h5>
+                        <h5 class="fw-bold text-white mb-0"><i class="bi bi-search text-info me-2"></i>Cari Lagu untuk Ditambahkan ke <?= htmlspecialchars($currentPlaylist['title']); ?></h5>
                         <button class="btn btn-sm text-secondary" onclick="toggleAddSongSection()"><i class="bi bi-x-lg"></i></button>
                     </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-music-note"></i></span>
-                        <input type="text" class="form-control bg-dark border-secondary text-white" placeholder="Ketik judul lagu yang ingin kamu tambahkan...">
-                        <button class="btn btn-primary-custom px-4" type="button" onclick="showToast('Mencari lagu di repositori Spotifake...')">Cari</button>
+                        <input type="text" id="inputCustomSongName" class="form-control bg-dark border-secondary text-white" placeholder="Ketik judul lagu yang ingin kamu tambahkan...">
+                        <button class="btn btn-primary-custom px-4" type="button" onclick="handleAddCustomSong()">Tambah</button>
                     </div>
                     <div class="text-secondary small">
-                        💡 Rekomendasi cepat: <a href="javascript:void(0)" onclick="addSongMock('Arus Frekuensi 2.0')" class="text-info text-decoration-none">+ Arus Frekuensi 2.0</a>, <a href="javascript:void(0)" onclick="addSongMock('Deep Focus Synth')" class="text-info text-decoration-none">+ Deep Focus Synth</a>
+                        💡 Rekomendasi lagu: 
+                        <a href="javascript:void(0)" onclick="addSongMock('Arus Frekuensi 2.0', 'Subzero Lab', 'Electronic', '05:20', 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=300&auto=format&fit=crop')" class="text-info text-decoration-none me-2">+ Arus Frekuensi 2.0</a>
+                        <a href="javascript:void(0)" onclick="addSongMock('Deep Focus Synth', 'Cyber Pulse', 'Coding Mode', '04:10', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=300&auto=format&fit=crop')" class="text-info text-decoration-none me-2">+ Deep Focus Synth</a>
+                        <a href="javascript:void(0)" onclick="addSongMock('Gelombang Fajar', 'Elsya Handayani', 'Cahaya Pertama', '04:45', 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=300&auto=format&fit=crop')" class="text-info text-decoration-none me-2">+ Gelombang Fajar (Elsya)</a>
+                        <a href="javascript:void(0)" onclick="addSongMock('Midnight Echoes', 'Arctic Mirage', 'Northern Lights', '03:52', 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=300&auto=format&fit=crop')" class="text-info text-decoration-none">+ Midnight Echoes</a>
                     </div>
                 </div>
 
@@ -277,31 +322,41 @@ $playlistSongs = [
                                 <th style="width: 60px; text-align: center;">AKSI</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php foreach ($playlistSongs as $index => $song): ?>
-                                <tr class="play-trigger" data-track="<?= htmlspecialchars($song['title']); ?>" data-artist="<?= htmlspecialchars($song['artist']); ?>" data-duration="<?= htmlspecialchars($song['duration']); ?>" data-img="<?= htmlspecialchars($song['cover']); ?>">
-                                    <td style="text-align: center; color: var(--text-muted); font-weight: 700;">
-                                        <?= str_pad($index + 1, 2, '0', STR_PAD_LEFT); ?>
-                                    </td>
-                                    <td>
-                                        <div class="song-title-cell">
-                                            <img src="<?= htmlspecialchars($song['cover']); ?>" alt="Cover" class="song-thumb-small">
-                                            <div>
-                                                <div class="fw-bold text-white"><?= htmlspecialchars($song['title']); ?></div>
-                                                <div class="text-secondary small"><?= htmlspecialchars($song['artist']); ?></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-secondary"><?= htmlspecialchars($song['album']); ?></td>
-                                    <td class="text-muted small"><?= htmlspecialchars($song['date_added']); ?></td>
-                                    <td class="text-end text-muted small pe-4"><?= htmlspecialchars($song['duration']); ?></td>
-                                    <td style="text-align: center;">
-                                        <button class="btn btn-sm text-secondary p-0 border-0 bg-transparent hover-danger" onclick="event.stopPropagation(); removeSongRow(this, '<?= htmlspecialchars($song['title']); ?>')" title="Hapus dari playlist">
-                                            <i class="bi bi-trash3 fs-6"></i>
-                                        </button>
+                        <tbody id="playlistTableBody">
+                            <?php if (empty($playlistSongs)): ?>
+                                <tr id="emptyPlaylistRow">
+                                    <td colspan="6" class="text-center py-5">
+                                        <i class="bi bi-music-note-beamed fs-1 text-info opacity-50 d-block mb-3"></i>
+                                        <h5 class="text-white fw-bold">Playlist ini masih kosong</h5>
+                                        <p class="text-muted small mb-0">Klik salah satu rekomendasi lagu di atas atau ketik judul lagu untuk menambahkan lagu pilihan ke playlist <strong><?= htmlspecialchars($currentPlaylist['title']); ?></strong>.</p>
                                     </td>
                                 </tr>
-                            <?php endforeach; ?>
+                            <?php else: ?>
+                                <?php foreach ($playlistSongs as $index => $song): ?>
+                                    <tr class="play-trigger" data-track="<?= htmlspecialchars($song['title']); ?>" data-artist="<?= htmlspecialchars($song['artist']); ?>" data-duration="<?= htmlspecialchars($song['duration']); ?>" data-img="<?= htmlspecialchars($song['cover']); ?>">
+                                        <td style="text-align: center; color: var(--text-muted); font-weight: 700;">
+                                            <?= str_pad($index + 1, 2, '0', STR_PAD_LEFT); ?>
+                                        </td>
+                                        <td>
+                                            <div class="song-title-cell">
+                                                <img src="<?= htmlspecialchars($song['cover']); ?>" alt="Cover" class="song-thumb-small">
+                                                <div>
+                                                    <div class="fw-bold text-white"><?= htmlspecialchars($song['title']); ?></div>
+                                                    <div class="text-secondary small"><?= htmlspecialchars($song['artist']); ?></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-secondary"><?= htmlspecialchars($song['album']); ?></td>
+                                        <td class="text-muted small"><?= htmlspecialchars($song['date_added']); ?></td>
+                                        <td class="text-end text-muted small pe-4"><?= htmlspecialchars($song['duration']); ?></td>
+                                        <td style="text-align: center;">
+                                            <button class="btn btn-sm text-secondary p-0 border-0 bg-transparent hover-danger" onclick="event.stopPropagation(); removeSongRow(this, '<?= htmlspecialchars($song['title']); ?>')" title="Hapus dari playlist">
+                                                <i class="bi bi-trash3 fs-6"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -356,57 +411,57 @@ $playlistSongs = [
             <span id="toastMessage">Pemberitahuan</span>
         </div>
 
-        <!-- ==================== MODAL BAGIKAN (UI-005C) ==================== -->
-        <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered share-modal-dialog">
-                <div class="modal-content share-modal-content">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-share-fill text-info fs-5"></i>
-                            <h5 class="fw-bold mb-0 text-white">Bagikan Playlist: <?= htmlspecialchars($currentPlaylist['title']); ?></h5>
-                        </div>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <!-- ==================== MODAL BAGIKAN (UI-005C) ==================== -->
+    <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered share-modal-dialog">
+            <div class="modal-content share-modal-content">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-share-fill text-info fs-5"></i>
+                        <h5 class="fw-bold mb-0 text-white">Bagikan Playlist: <?= htmlspecialchars($currentPlaylist['title']); ?></h5>
                     </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-                    <p class="text-secondary small mb-3">Bagikan playlist ini dengan teman-temanmu:</p>
+                <p class="text-secondary small mb-3">Bagikan playlist ini dengan teman-temanmu:</p>
 
-                    <div class="share-url-box">
-                        <input type="text" id="shareUrlInput" class="share-url-input" value="https://spotifake.app/playlist/<?= htmlspecialchars($playlistSlug); ?>" readonly>
-                        <button type="button" class="btn-copy-url" onclick="copyShareLink()">
-                            <i class="bi bi-clipboard me-1"></i> Salin
-                        </button>
-                    </div>
+                <div class="share-url-box">
+                    <input type="text" id="shareUrlInput" class="share-url-input" value="https://spotifake.app/playlist/<?= htmlspecialchars($playlistSlug); ?>" readonly>
+                    <button type="button" class="btn-copy-url" onclick="copyShareLink()">
+                        <i class="bi bi-clipboard me-1"></i> Salin
+                    </button>
+                </div>
 
-                    <div class="share-social-grid">
-                        <a href="https://wa.me/?text=Dengarkan%20playlist%20<?= urlencode($currentPlaylist['title']); ?>%20di%20Spotifake:%20https://spotifake.app/playlist/<?= $playlistSlug; ?>" target="_blank" class="share-social-btn wa">
-                            <i class="bi bi-whatsapp"></i>
-                            <span>WhatsApp</span>
-                        </a>
-                        <a href="https://t.me/share/url?url=https://spotifake.app/playlist/<?= $playlistSlug; ?>" target="_blank" class="share-social-btn tg">
-                            <i class="bi bi-telegram"></i>
-                            <span>Telegram</span>
-                        </a>
-                        <a href="https://twitter.com/intent/tweet?text=Dengarkan%20playlist%20<?= urlencode($currentPlaylist['title']); ?>%20di%20Spotifake" target="_blank" class="share-social-btn tw">
-                            <i class="bi bi-twitter-x"></i>
-                            <span>Twitter / X</span>
-                        </a>
-                        <a href="javascript:void(0)" onclick="showToast('Tautan playlist disalin untuk Instagram Stories!')" class="share-social-btn ig">
-                            <i class="bi bi-instagram"></i>
-                            <span>Instagram</span>
-                        </a>
-                    </div>
+                <div class="share-social-grid">
+                    <a href="https://wa.me/?text=Dengarkan%20playlist%20<?= urlencode($currentPlaylist['title']); ?>%20di%20Spotifake:%20https://spotifake.app/playlist/<?= $playlistSlug; ?>" target="_blank" class="share-social-btn wa">
+                        <i class="bi bi-whatsapp"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                    <a href="https://t.me/share/url?url=https://spotifake.app/playlist/<?= $playlistSlug; ?>" target="_blank" class="share-social-btn tg">
+                        <i class="bi bi-telegram"></i>
+                        <span>Telegram</span>
+                    </a>
+                    <a href="https://twitter.com/intent/tweet?text=Dengarkan%20playlist%20<?= urlencode($currentPlaylist['title']); ?>%20di%20Spotifake" target="_blank" class="share-social-btn tw">
+                        <i class="bi bi-twitter-x"></i>
+                        <span>Twitter / X</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="showToast('Tautan playlist disalin untuk Instagram Stories!')" class="share-social-btn ig">
+                        <i class="bi bi-instagram"></i>
+                        <span>Instagram</span>
+                    </a>
+                </div>
 
-                    <div class="qr-preview-box">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://spotifake.app/playlist/<?= $playlistSlug; ?>" alt="QR Code" class="qr-code-img">
-                        <div>
-                            <div class="fw-bold text-white small">Scan & Dengarkan Playlist</div>
-                            <div class="text-secondary small">Arahkan kamera HP untuk membuka playlist langsung di ponsel.</div>
-                        </div>
+                <div class="qr-preview-box">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://spotifake.app/playlist/<?= $playlistSlug; ?>" alt="QR Code" class="qr-code-img">
+                    <div>
+                        <div class="fw-bold text-white small">Scan & Dengarkan Playlist</div>
+                        <div class="text-secondary small">Arahkan kamera HP untuk membuka playlist langsung di ponsel.</div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -414,6 +469,82 @@ $playlistSongs = [
     <script src="../assets/js/pengguna/player.js"></script>
     <script src="../assets/js/pengguna/playlist.js"></script>
     <script src="../assets/js/pengguna/share-modal.js"></script>
+
+    <script>
+        function addSongMock(title, artist = 'Artis Spotifake', album = 'Single', duration = '03:30', cover = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=300&auto=format&fit=crop') {
+            const tbody = document.getElementById('playlistTableBody');
+            if (!tbody) return;
+
+            const emptyRow = document.getElementById('emptyPlaylistRow');
+            if (emptyRow) emptyRow.remove();
+
+            const rowCount = tbody.querySelectorAll('tr').length + 1;
+            const tr = document.createElement('tr');
+            tr.className = 'play-trigger';
+            tr.setAttribute('data-track', title);
+            tr.setAttribute('data-artist', artist);
+            tr.setAttribute('data-duration', duration);
+            tr.setAttribute('data-img', cover);
+            tr.innerHTML = `
+                <td style="text-align: center; color: var(--text-muted); font-weight: 700;">
+                    ${String(rowCount).padStart(2, '0')}
+                </td>
+                <td>
+                    <div class="song-title-cell">
+                        <img src="${cover}" alt="Cover" class="song-thumb-small">
+                        <div>
+                            <div class="fw-bold text-white">${title}</div>
+                            <div class="text-secondary small">${artist}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-secondary">${album}</td>
+                <td class="text-muted small">Baru saja</td>
+                <td class="text-end text-muted small pe-4">${duration}</td>
+                <td style="text-align: center;">
+                    <button class="btn btn-sm text-secondary p-0 border-0 bg-transparent hover-danger" onclick="event.stopPropagation(); removeSongRow(this, '${title}')" title="Hapus dari playlist">
+                        <i class="bi bi-trash3 fs-6"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+
+            // Update counter di header
+            const countEl = document.getElementById('playlistHeaderCount');
+            if (countEl) countEl.textContent = `${rowCount} lagu`;
+
+            // Update main play button if it was empty
+            const btnPlayAll = document.getElementById('btnPlayAllPlaylist');
+            if (btnPlayAll) {
+                btnPlayAll.setAttribute('data-track', title);
+                btnPlayAll.setAttribute('data-artist', artist);
+                btnPlayAll.setAttribute('data-duration', duration);
+                btnPlayAll.setAttribute('data-img', cover);
+            }
+
+            // Bind click to play immediately
+            tr.addEventListener('click', (e) => {
+                if (typeof playTrack === 'function') {
+                    playTrack(title, artist, duration, cover);
+                } else {
+                    showToast(`Memutar: ${title}`);
+                }
+            });
+
+            showToast(`Lagu "${title}" berhasil ditambahkan ke playlist! 🎵`);
+        }
+
+        function handleAddCustomSong() {
+            const input = document.getElementById('inputCustomSongName');
+            if (!input || !input.value.trim()) {
+                showToast('Ketik judul lagu terlebih dahulu!');
+                return;
+            }
+            const title = input.value.trim();
+            addSongMock(title, '<?= htmlspecialchars($userName); ?> Pilihan', 'Single Koleksi', '03:20');
+            input.value = '';
+        }
+    </script>
 </body>
 
 </html>

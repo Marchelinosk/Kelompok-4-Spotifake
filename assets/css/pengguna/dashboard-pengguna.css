@@ -290,27 +290,6 @@ body {
   gap: 1.25rem;
 }
 
-.premium-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  background: rgba(0, 162, 255, 0.08);
-  border: 1px solid var(--border-cyan);
-  color: var(--accent-cyan-light);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  padding: 0.35rem 0.95rem;
-  border-radius: 9999px;
-  box-shadow: 0 0 14px rgba(0, 162, 255, 0.18);
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.premium-badge:hover {
-  background: rgba(0, 162, 255, 0.18);
-  color: #fff;
-}
 
 .user-profile {
   display: flex;

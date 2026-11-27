@@ -26,7 +26,7 @@ if ($jam >= 5 && $jam < 11) {
 
 $pageTitle = "Spotifake - Web Audio Player";
 
-// Cover default bernuansa synthwave (karena tabel songs SDD tidak menyimpan kolom cover)[cite: 1]
+// Cover default bernuansa synthwave (karena tabel songs SDD tidak menyimpan kolom cover)
 $defaultCovers = [
     "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=400&auto=format&fit=crop",
@@ -40,7 +40,7 @@ $defaultCovers = [
     "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=400&auto=format&fit=crop"
 ];
 
-// 1. Ambil SELURUH 41 lagu dari tabel songs[cite: 1]
+// 1. Ambil SELURUH 41 lagu dari tabel songs
 $stmtAllSongs = $pdo->query("SELECT * FROM songs ORDER BY title ASC");
 $dbAllSongs = $stmtAllSongs->fetchAll(PDO::FETCH_ASSOC);
 $totalSongsCount = count($dbAllSongs);
@@ -133,7 +133,10 @@ $topRecommendations = [
 
     <style>
         /* Tombol aksi kecil di kartu lagu untuk Simpan ke Koleksi */
-        .track-card { position: relative; }
+        .track-card {
+            position: relative;
+        }
+
         .btn-add-playlist-card {
             position: absolute;
             top: 14px;
@@ -142,7 +145,7 @@ $topRecommendations = [
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(15, 23, 42, 0.8);
             color: #38bdf8;
             display: flex;
@@ -150,11 +153,13 @@ $topRecommendations = [
             justify-content: center;
             transition: all 0.2s ease;
         }
+
         .btn-add-playlist-card:hover {
             background: #0ea5e9;
             color: #fff;
             transform: scale(1.1);
         }
+
         .playlist-link.active-playlist {
             color: #38bdf8 !important;
             font-weight: 700;
@@ -192,12 +197,12 @@ $topRecommendations = [
                 <li>
                     <a href="#koleksi-disukai" class="nav-link-custom">
                         <i class="bi bi-heart-fill text-danger"></i>
-                        <span>Lagu Disukai (<?= count($dbLikedSongs); ?>)</span>
+                        <span>Lagu Disukai (<span id="sidebarLikedCount"><?= count($dbLikedSongs); ?></span>)</span>
                     </a>
                 </li>
                 <li>
-                    <a href="koleksi.php?action=create" class="nav-link-custom" id="navCreatePlaylist">
-                        <i class="bi bi-plus-square"></i>
+                    <a href="#" class="nav-link-custom" data-bs-toggle="modal" data-bs-target="#modalCreatePlaylist" id="navCreatePlaylist">
+                        <i class="bi bi-plus-square-fill text-info"></i>
                         <span>Buat Playlist</span>
                     </a>
                 </li>
@@ -213,13 +218,19 @@ $topRecommendations = [
             <ul class="playlist-list" id="sidebarPlaylistList">
                 <?php if (!empty($userPlaylists)): ?>
                     <?php foreach ($userPlaylists as $pl): ?>
-                        <li>
-                            <a href="#detail-koleksi" class="playlist-link view-playlist-btn" 
-                               data-id="<?= $pl['id_playlist']; ?>" 
-                               data-name="<?= htmlspecialchars($pl['playlist_name']); ?>"
-                               data-desc="<?= htmlspecialchars($pl['description'] ?? ''); ?>">
+                        <li class="d-flex justify-content-between align-items-center pe-3" data-playlist-item="<?= $pl['id_playlist']; ?>">
+                            <a href="#detail-koleksi" class="playlist-link view-playlist-btn text-truncate"
+                                data-id="<?= $pl['id_playlist']; ?>"
+                                data-name="<?= htmlspecialchars($pl['playlist_name']); ?>"
+                                data-desc="<?= htmlspecialchars($pl['description'] ?? ''); ?>">
                                 <i class="bi bi-music-note-list me-2 text-info"></i><?= htmlspecialchars($pl['playlist_name']); ?>
                             </a>
+                            <button type="button" class="btn btn-sm text-danger p-0 border-0 ms-2 delete-playlist-btn"
+                                data-id="<?= $pl['id_playlist']; ?>"
+                                data-name="<?= htmlspecialchars($pl['playlist_name']); ?>"
+                                title="Hapus Koleksi">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </li>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -246,6 +257,7 @@ $topRecommendations = [
                     </div>
                 </div>
 
+                <!-- Dropdown Akun (Tanpa Pengaturan) -->
                 <div class="topbar-right">
                     <div class="user-profile dropdown">
                         <div data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
@@ -254,11 +266,10 @@ $topRecommendations = [
                         </div>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" style="background-color: #1a1a1a; border: 1px solid #333;">
                             <li><a class="dropdown-item text-white" href="profil.php"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
-                            <li><a class="dropdown-item text-white" href="pengaturan.php"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
                             <li>
                                 <hr class="dropdown-divider border-secondary">
                             </li>
-                            <li><a class="dropdown-item text-danger fw-bold" href="../logout.php"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+                            <li><a class="dropdown-item text-danger fw-bold" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
                         </ul>
                     </div>
                 </div>
@@ -284,13 +295,13 @@ $topRecommendations = [
 
                         <div class="hero-actions">
                             <?php $heroSong = $dbQuickPicks[0] ?? null; ?>
-                            <button class="btn-hero-play play-trigger" 
-                                    data-id="<?= $heroSong['id_song'] ?? 0; ?>"
-                                    data-track="<?= htmlspecialchars($heroSong['title'] ?? 'Frostwave Vol. 1'); ?>" 
-                                    data-artist="<?= htmlspecialchars($heroSong['artist'] ?? 'Arctic Mirage'); ?>" 
-                                    data-duration="<?= isset($heroSong['duration']) ? gmdate('i:s', (int)$heroSong['duration']) : '00:30'; ?>" 
-                                    data-img="https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?q=80&w=300&auto=format&fit=crop"
-                                    data-audio="<?= htmlspecialchars($heroSong['file_path'] ?? ''); ?>">
+                            <button class="btn-hero-play play-trigger"
+                                data-id="<?= $heroSong['id_song'] ?? 0; ?>"
+                                data-track="<?= htmlspecialchars($heroSong['title'] ?? 'Frostwave Vol. 1'); ?>"
+                                data-artist="<?= htmlspecialchars($heroSong['artist'] ?? 'Arctic Mirage'); ?>"
+                                data-duration="<?= isset($heroSong['duration']) ? gmdate('i:s', (int)$heroSong['duration']) : '00:30'; ?>"
+                                data-img="https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?q=80&w=300&auto=format&fit=crop"
+                                data-audio="<?= htmlspecialchars($heroSong['file_path'] ?? ''); ?>">
                                 <i class="bi bi-play-fill fs-5"></i> Dengarkan Sekarang
                             </button>
                             <button class="btn-hero-fav" data-bs-toggle="modal" data-bs-target="#modalCreatePlaylist">
@@ -318,9 +329,14 @@ $topRecommendations = [
                             <h2 class="section-main-title" id="activePlaylistTitle">Nama Koleksi</h2>
                             <div class="section-subtitle" id="activePlaylistDesc">Daftar lagu yang tersimpan di koleksi ini</div>
                         </div>
-                        <button class="btn btn-sm btn-outline-light" id="btnClosePlaylistView">
-                            <i class="bi bi-x-lg me-1"></i> Tutup Tampilan Koleksi
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-danger" id="btnDeleteActivePlaylist" data-id="0" data-name="">
+                                <i class="bi bi-trash me-1"></i> Hapus Koleksi
+                            </button>
+                            <button class="btn btn-sm btn-outline-light" id="btnClosePlaylistView">
+                                <i class="bi bi-x-lg me-1"></i> Tutup Tampilan Koleksi
+                            </button>
+                        </div>
                     </div>
                     <div class="track-cards-grid" id="activePlaylistGrid"></div>
                 </section>
@@ -338,17 +354,17 @@ $topRecommendations = [
                     </div>
 
                     <div class="quick-grid">
-                        <?php foreach ($dbQuickPicks as $index => $pick): 
+                        <?php foreach ($dbQuickPicks as $index => $pick):
                             $formattedDuration = gmdate("i:s", (int)$pick['duration']);
                             $coverImg = $defaultCovers[$index % count($defaultCovers)];
                         ?>
-                            <div class="quick-card play-trigger" 
-                                 data-id="<?= $pick['id_song']; ?>"
-                                 data-track="<?= htmlspecialchars($pick['title']); ?>" 
-                                 data-artist="<?= htmlspecialchars($pick['artist']); ?>" 
-                                 data-duration="<?= $formattedDuration; ?>" 
-                                 data-img="<?= $coverImg; ?>"
-                                 data-audio="<?= htmlspecialchars($pick['file_path']); ?>">
+                            <div class="quick-card play-trigger"
+                                data-id="<?= $pick['id_song']; ?>"
+                                data-track="<?= htmlspecialchars($pick['title']); ?>"
+                                data-artist="<?= htmlspecialchars($pick['artist']); ?>"
+                                data-duration="<?= $formattedDuration; ?>"
+                                data-img="<?= $coverImg; ?>"
+                                data-audio="<?= htmlspecialchars($pick['file_path']); ?>">
                                 <img src="<?= $coverImg; ?>" alt="<?= htmlspecialchars($pick['title']); ?>" class="quick-card-img">
 
                                 <div class="quick-card-info">
@@ -364,7 +380,7 @@ $topRecommendations = [
                     </div>
                 </section>
 
-                <!-- 3. Section: Koleksi Lagu Disukai (Dari Tabel likes)[cite: 4] -->
+                <!-- 3. Section: Koleksi Lagu Disukai (Dari Tabel likes) -->
                 <section class="dashboard-section" id="koleksi-disukai">
                     <div class="section-header-row">
                         <div>
@@ -376,21 +392,21 @@ $topRecommendations = [
 
                     <div class="track-cards-grid" id="likedSongsGrid">
                         <?php if (!empty($dbLikedSongs)): ?>
-                            <?php foreach ($dbLikedSongs as $index => $liked): 
+                            <?php foreach ($dbLikedSongs as $index => $liked):
                                 $formattedDuration = gmdate("i:s", (int)$liked['duration']);
                                 $coverImg = $defaultCovers[$index % count($defaultCovers)];
                             ?>
-                                <div class="track-card play-trigger" 
-                                     data-id="<?= $liked['id_song']; ?>"
-                                     data-track="<?= htmlspecialchars($liked['title']); ?>" 
-                                     data-artist="<?= htmlspecialchars($liked['artist']); ?>" 
-                                     data-duration="<?= $formattedDuration; ?>" 
-                                     data-img="<?= $coverImg; ?>"
-                                     data-audio="<?= htmlspecialchars($liked['file_path']); ?>">
-                                    <button type="button" class="btn-add-playlist-card open-add-playlist" 
-                                            data-song-id="<?= $liked['id_song']; ?>" 
-                                            data-song-title="<?= htmlspecialchars($liked['title']); ?>"
-                                            title="Simpan ke Koleksi">
+                                <div class="track-card play-trigger"
+                                    data-id="<?= $liked['id_song']; ?>"
+                                    data-track="<?= htmlspecialchars($liked['title']); ?>"
+                                    data-artist="<?= htmlspecialchars($liked['artist']); ?>"
+                                    data-duration="<?= $formattedDuration; ?>"
+                                    data-img="<?= $coverImg; ?>"
+                                    data-audio="<?= htmlspecialchars($liked['file_path']); ?>">
+                                    <button type="button" class="btn-add-playlist-card open-add-playlist"
+                                        data-song-id="<?= $liked['id_song']; ?>"
+                                        data-song-title="<?= htmlspecialchars($liked['title']); ?>"
+                                        title="Simpan ke Koleksi">
                                         <i class="bi bi-plus-lg"></i>
                                     </button>
                                     <div class="track-img-wrapper">
@@ -416,7 +432,7 @@ $topRecommendations = [
                     </div>
                 </section>
 
-                <!-- 4. Section: Semua Katalog Lagu (Seluruh 41 Lagu dari Database)[cite: 1] -->
+                <!-- 4. Section: Semua Katalog Lagu (Seluruh 41 Lagu dari Database) -->
                 <section class="dashboard-section" id="semua-katalog">
                     <div class="section-header-row">
                         <div>
@@ -427,23 +443,23 @@ $topRecommendations = [
                     </div>
 
                     <div class="track-cards-grid">
-                        <?php foreach ($dbAllSongs as $index => $song): 
+                        <?php foreach ($dbAllSongs as $index => $song):
                             $formattedDuration = gmdate("i:s", (int)$song['duration']);
                             $coverImg = $defaultCovers[$index % count($defaultCovers)];
                         ?>
-                            <div class="track-card play-trigger" 
-                                 data-id="<?= $song['id_song']; ?>"
-                                 data-track="<?= htmlspecialchars($song['title']); ?>" 
-                                 data-artist="<?= htmlspecialchars($song['artist']); ?>" 
-                                 data-duration="<?= $formattedDuration; ?>" 
-                                 data-img="<?= $coverImg; ?>"
-                                 data-audio="<?= htmlspecialchars($song['file_path']); ?>">
-                                
+                            <div class="track-card play-trigger"
+                                data-id="<?= $song['id_song']; ?>"
+                                data-track="<?= htmlspecialchars($song['title']); ?>"
+                                data-artist="<?= htmlspecialchars($song['artist']); ?>"
+                                data-duration="<?= $formattedDuration; ?>"
+                                data-img="<?= $coverImg; ?>"
+                                data-audio="<?= htmlspecialchars($song['file_path']); ?>">
+
                                 <!-- Tombol Tambah ke Koleksi -->
-                                <button type="button" class="btn-add-playlist-card open-add-playlist" 
-                                        data-song-id="<?= $song['id_song']; ?>" 
-                                        data-song-title="<?= htmlspecialchars($song['title']); ?>"
-                                        title="Tambahkan ke Koleksi">
+                                <button type="button" class="btn-add-playlist-card open-add-playlist"
+                                    data-song-id="<?= $song['id_song']; ?>"
+                                    data-song-title="<?= htmlspecialchars($song['title']); ?>"
+                                    title="Tambahkan ke Koleksi">
                                     <i class="bi bi-plus-lg"></i>
                                 </button>
 
@@ -475,7 +491,7 @@ $topRecommendations = [
                     </div>
 
                     <div class="rec-grid">
-                        <?php foreach ($topRecommendations as $index => $rec): 
+                        <?php foreach ($topRecommendations as $index => $rec):
                             $sampleSong = $dbAllSongs[($index * 5) % max(1, $totalSongsCount)] ?? [];
                         ?>
                             <div class="rec-card">
@@ -500,14 +516,14 @@ $topRecommendations = [
                                     <button class="btn-rec-action" onclick="showToast('<?= htmlspecialchars($rec['name']); ?>: <?= htmlspecialchars($rec['action']); ?> berhasil!')">
                                         <?= htmlspecialchars($rec['action']); ?>
                                     </button>
-                                    <div class="rec-play-btn play-trigger" 
-                                         data-id="<?= $sampleSong['id_song'] ?? 0; ?>"
-                                         data-track="<?= htmlspecialchars($rec['name']); ?>" 
-                                         data-artist="Kurasi Rekomendasi" 
-                                         data-duration="00:30" 
-                                         data-img="<?= htmlspecialchars($rec['img']); ?>" 
-                                         data-audio="<?= htmlspecialchars($sampleSong['file_path'] ?? ''); ?>"
-                                         title="Putar">
+                                    <div class="rec-play-btn play-trigger"
+                                        data-id="<?= $sampleSong['id_song'] ?? 0; ?>"
+                                        data-track="<?= htmlspecialchars($rec['name']); ?>"
+                                        data-artist="Kurasi Rekomendasi"
+                                        data-duration="00:30"
+                                        data-img="<?= htmlspecialchars($rec['img']); ?>"
+                                        data-audio="<?= htmlspecialchars($sampleSong['file_path'] ?? ''); ?>"
+                                        title="Putar">
                                         <i class="bi bi-play-fill fs-5"></i>
                                     </div>
                                 </div>
@@ -628,7 +644,7 @@ $topRecommendations = [
                 <div class="modal-body">
                     <p class="small text-secondary mb-3">Pilih koleksi tujuan untuk lagu: <strong class="text-info" id="selectedSongForPlaylist">-</strong></p>
                     <input type="hidden" id="targetSongIdInput" value="0">
-                    
+
                     <div id="playlistSelectionList" class="d-grid gap-2">
                         <?php if (!empty($userPlaylists)): ?>
                             <?php foreach ($userPlaylists as $pl): ?>

@@ -99,8 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // Delegasi Klik untuk Semua Kartu Lagu (termasuk yang baru dimuat dinamis)
-    document.addEventListener('click', (e) => {
+    // Delegasi Klik Global (Tombol '+', Hapus Lagu dari Playlist, & Kartu Lagu)
+    document.addEventListener('click', async (e) => {
         // 1. Jika klik tombol '+' Tambah ke Koleksi di pojok kartu
         const addPlaylistBtn = e.target.closest('.open-add-playlist');
         if (addPlaylistBtn) {
@@ -115,7 +115,46 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 2. Jika klik Kartu Lagu / Tombol Play
+        // 2. Jika klik tombol '×' Hapus Lagu Tertentu dari dalam Koleksi
+        const removeBtn = e.target.closest('.remove-from-playlist-btn');
+        if (removeBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const playlistId = removeBtn.getAttribute('data-playlist-id');
+            const songId     = removeBtn.getAttribute('data-song-id');
+            const songTitle  = removeBtn.getAttribute('data-song-title');
+
+            if (!confirm(`Hapus lagu "${songTitle}" dari koleksi ini?`)) return;
+
+            const formData = new FormData();
+            formData.append('action', 'remove_from_playlist');
+            formData.append('id_playlist', playlistId);
+            formData.append('id_song', songId);
+
+            try {
+                const res = await fetch('api_koleksi.php', { method: 'POST', body: formData });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    showToast(data.message);
+                    const card = removeBtn.closest('.track-card');
+                    const grid = document.getElementById('activePlaylistGrid');
+                    card?.remove();
+
+                    if (grid && grid.querySelectorAll('.track-card').length === 0) {
+                        grid.innerHTML = '<p class="text-secondary">Koleksi ini masih kosong. Klik tombol <strong>+</strong> pada kartu lagu di bawah untuk menambahkannya.</p>';
+                    }
+                } else {
+                    showToast(data.message || 'Gagal menghapus lagu dari koleksi.');
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server.');
+            }
+            return;
+        }
+
+        // 3. Jika klik Kartu Lagu / Tombol Play
         const trigger = e.target.closest('.play-trigger');
         if (trigger) {
             e.preventDefault();
@@ -161,14 +200,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
 
                 if (data.status === 'success') {
+                    const likedGrid = document.getElementById('likedSongsGrid');
+                    const emptyMsg = document.getElementById('emptyLikedMsg');
+
                     if (data.liked) {
                         likedSet.add(currentSongId);
+                        if (emptyMsg) emptyMsg.remove();
+
+                        if (likedGrid && !likedGrid.querySelector(`.track-card[data-id="${currentSongId}"]`)) {
+                            const sourceCard = document.querySelector(`.play-trigger[data-id="${currentSongId}"]`);
+                            const title = currentTitle?.textContent || 'Lagu Pilihan';
+                            const artist = currentArtist?.textContent || 'Artis Spotifake';
+                            const cover = currentCover?.src || 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400&auto=format&fit=crop';
+                            const audio = audioPlayer?.src || sourceCard?.getAttribute('data-audio') || '';
+
+                            const cardHTML = `
+                                <div class="track-card play-trigger" 
+                                     data-id="${currentSongId}"
+                                     data-track="${title}" 
+                                     data-artist="${artist}" 
+                                     data-img="${cover}"
+                                     data-audio="${audio}">
+                                    <button type="button" class="btn-add-playlist-card open-add-playlist" 
+                                            data-song-id="${currentSongId}" 
+                                            data-song-title="${title}"
+                                            title="Simpan ke Koleksi">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                    <div class="track-img-wrapper">
+                                        <img src="${cover}" alt="${title}" class="track-img">
+                                        <div class="track-play-btn"><i class="bi bi-play-fill"></i></div>
+                                    </div>
+                                    <div class="track-card-title">${title}</div>
+                                    <div class="track-card-artist">${artist}</div>
+                                    <div class="track-card-meta">
+                                        <span class="text-danger"><i class="bi bi-heart-fill"></i> Disukai</span>
+                                    </div>
+                                </div>`;
+                            likedGrid.insertAdjacentHTML('afterbegin', cardHTML);
+                        }
                     } else {
                         likedSet.delete(currentSongId);
+
+                        const cardToRemove = likedGrid?.querySelector(`.track-card[data-id="${currentSongId}"]`);
+                        if (cardToRemove) cardToRemove.remove();
+
+                        if (likedGrid && likedSet.size === 0) {
+                            likedGrid.innerHTML = `<div class="text-secondary small" id="emptyLikedMsg">Belum ada lagu yang disukai. Putar lagu apa saja lalu klik ikon <i class="bi bi-heart text-danger"></i> di pemutar bawah.</div>`;
+                        }
                     }
+
                     syncLikeButtonUI(currentSongId);
+
                     const badge = document.getElementById('likedCountBadge');
+                    const sidebarBadge = document.getElementById('sidebarLikedCount');
                     if (badge) badge.textContent = likedSet.size;
+                    if (sidebarBadge) sidebarBadge.textContent = likedSet.size;
+
                     showToast(data.message);
                 } else {
                     showToast(data.message || 'Gagal memproses suka.');
@@ -193,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (data.status === 'success') {
                     showToast(data.message);
-                    // Muat ulang halaman agar sidebar & pilihan koleksi langsung terbarui
                     setTimeout(() => location.reload(), 700);
                 } else {
                     showToast(data.message);
@@ -244,6 +331,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('activePlaylistTitle').textContent = `Koleksi: ${plName}`;
             document.getElementById('activePlaylistDesc').textContent = plDesc || 'Daftar lagu tersimpan dalam koleksi ini';
 
+            // Simpan ID & Nama koleksi aktif ke tombol Hapus Koleksi di header detail
+            const delActiveBtn = document.getElementById('btnDeleteActivePlaylist');
+            if (delActiveBtn) {
+                delActiveBtn.setAttribute('data-id', plId);
+                delActiveBtn.setAttribute('data-name', plName);
+            }
+
             section.classList.remove('d-none');
             grid.innerHTML = '<p class="text-info">Memuat lagu...</p>';
             section.scrollIntoView({ behavior: 'smooth' });
@@ -261,6 +355,13 @@ document.addEventListener('DOMContentLoaded', () => {
                              data-artist="${song.artist}" 
                              data-img="${defaultCover}"
                              data-audio="${song.file_path}">
+                            <button type="button" class="btn-add-playlist-card text-danger remove-from-playlist-btn" 
+                                    data-playlist-id="${plId}" 
+                                    data-song-id="${song.id_song}" 
+                                    data-song-title="${song.title}"
+                                    title="Hapus Lagu dari Koleksi">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
                             <div class="track-img-wrapper">
                                 <img src="${defaultCover}" alt="${song.title}" class="track-img">
                                 <div class="track-play-btn"><i class="bi bi-play-fill"></i></div>
@@ -282,6 +383,54 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnClosePlaylistView')?.addEventListener('click', () => {
         document.getElementById('detail-koleksi').classList.add('d-none');
         document.querySelectorAll('.view-playlist-btn').forEach(l => l.classList.remove('active-playlist'));
+    });
+
+    // ==================== FITUR HAPUS KOLEKSI / PLAYLIST ====================
+    async function handleDeletePlaylist(plId, plName) {
+        if (!plId || plId === '0') return;
+        if (!confirm(`Yakin ingin menghapus koleksi "${plName}"?`)) return;
+
+        const formData = new FormData();
+        formData.append('action', 'delete_playlist');
+        formData.append('id_playlist', plId);
+
+        try {
+            const res = await fetch('api_koleksi.php', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                showToast(data.message);
+
+                document.querySelector(`[data-playlist-item="${plId}"]`)?.remove();
+                document.querySelector(`.confirm-add-to-playlist[data-playlist-id="${plId}"]`)?.remove();
+
+                const activeDelBtn = document.getElementById('btnDeleteActivePlaylist');
+                if (activeDelBtn && activeDelBtn.getAttribute('data-id') === String(plId)) {
+                    document.getElementById('detail-koleksi')?.classList.add('d-none');
+                }
+
+                const sidebarList = document.getElementById('sidebarPlaylistList');
+                if (sidebarList && sidebarList.children.length === 0) {
+                    sidebarList.innerHTML = '<li class="text-muted small px-2" id="emptyPlaylistHint">Belum ada koleksi</li>';
+                }
+            } else {
+                showToast(data.message || 'Gagal menghapus koleksi.');
+            }
+        } catch (err) {
+            showToast('Gagal terhubung ke server.');
+        }
+    }
+
+    document.querySelectorAll('.delete-playlist-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDeletePlaylist(btn.getAttribute('data-id'), btn.getAttribute('data-name'));
+        });
+    });
+
+    document.getElementById('btnDeleteActivePlaylist')?.addEventListener('click', function () {
+        handleDeletePlaylist(this.getAttribute('data-id'), this.getAttribute('data-name'));
     });
 
     // ==================== KONTROL AUDIO PLAYER ====================

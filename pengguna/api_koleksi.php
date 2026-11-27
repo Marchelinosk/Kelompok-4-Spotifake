@@ -116,6 +116,62 @@ try {
         exit;
     }
 
+    // 5. Hapus Koleksi / Playlist (Tabel playlists & playlist_songs)
+    if ($action === 'delete_playlist') {
+        $id_playlist = (int) ($_POST['id_playlist'] ?? 0);
+        if ($id_playlist <= 0) {
+            echo json_encode(['status' => 'error', 'message' => 'ID koleksi tidak valid.']);
+            exit;
+        }
+
+        $checkOwner = $pdo->prepare("SELECT playlist_name FROM playlists WHERE id_playlist = ? AND id_user = ?");
+        $checkOwner->execute([$id_playlist, $id_user]);
+        $pl = $checkOwner->fetch(PDO::FETCH_ASSOC);
+
+        if (!$pl) {
+            echo json_encode(['status' => 'error', 'message' => 'Koleksi tidak ditemukan.']);
+            exit;
+        }
+
+        $pdo->prepare("DELETE FROM playlist_songs WHERE id_playlist = ?")->execute([$id_playlist]);
+        $pdo->prepare("DELETE FROM playlists WHERE id_playlist = ? AND id_user = ?")->execute([$id_playlist, $id_user]);
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => "Koleksi \"{$pl['playlist_name']}\" berhasil dihapus 🗑️"
+        ]);
+        exit;
+    }
+
+    // 6. Hapus Lagu Tertentu dari Dalam Koleksi (Tabel playlist_songs)
+    if ($action === 'remove_from_playlist') {
+        $id_playlist = (int) ($_POST['id_playlist'] ?? 0);
+        $id_song     = (int) ($_POST['id_song'] ?? 0);
+
+        if ($id_playlist <= 0 || $id_song <= 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Data koleksi atau lagu tidak valid.']);
+            exit;
+        }
+
+        $ownerCheck = $pdo->prepare("SELECT playlist_name FROM playlists WHERE id_playlist = ? AND id_user = ?");
+        $ownerCheck->execute([$id_playlist, $id_user]);
+        $playlist = $ownerCheck->fetch(PDO::FETCH_ASSOC);
+
+        if (!$playlist) {
+            echo json_encode(['status' => 'error', 'message' => 'Koleksi tidak ditemukan.']);
+            exit;
+        }
+
+        $del = $pdo->prepare("DELETE FROM playlist_songs WHERE id_playlist = ? AND id_song = ?");
+        $del->execute([$id_playlist, $id_song]);
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => "Lagu dihapus dari koleksi \"{$playlist['playlist_name']}\" 🗑️"
+        ]);
+        exit;
+    }
+
     echo json_encode(['status' => 'error', 'message' => 'Aksi tidak dikenali.']);
 } catch (PDOException $e) {
     echo json_encode(['status' => 'error', 'message' => 'Kesalahan database: ' . $e->getMessage()]);
